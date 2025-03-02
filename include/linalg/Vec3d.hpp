@@ -6,7 +6,7 @@
 
 class Vec3d {
 public:
-    float x, y, z, w;
+    float x, y, z;
     
     Vec3d();
     Vec3d(float x_, float y_, float z_);
@@ -20,6 +20,16 @@ public:
     Vec3d operator-(const float& f) const;
     Vec3d operator*(const float& f) const;
     Vec3d operator/(const float& f) const;
+
+    Vec3d& operator+=(const Vec3d& v);
+    Vec3d& operator-=(const Vec3d& v);
+    Vec3d& operator*=(const Vec3d& v);
+    Vec3d& operator/=(const Vec3d& v);
+    
+    Vec3d& operator+=(const float& f);
+    Vec3d& operator-=(const float& f);
+    Vec3d& operator*=(const float& f);
+    Vec3d& operator/=(const float& f);
     
     Vec3d crossProd(const Vec3d& v) const;
     float dotProd(const Vec3d& v) const;

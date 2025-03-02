@@ -27,9 +27,7 @@ private:
     std::vector<Triangle> m_poligons;
     std::vector<Vec3d> m_vertices;
 
-    Vec3d m_position;
-    float m_scaleX, m_scaleY, m_scaleZ;
-    float m_angleX, m_angleY, m_angleZ;
+    Vec3d m_position, m_scale, m_angle;
 
     void load(std::string filename);
     void parseLine(std::string line);

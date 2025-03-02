@@ -14,14 +14,18 @@ public:
 
     void run();
     void handleEvents();
-    void update(sf::Time& deltaTime);
+    void update();
     void draw();
 
 private:
     sf::RenderWindow m_window;
+    sf::Time deltaTime;
 
     Render m_render;
     Camera m_camera;
+    
+    Vec3d m_cameraTranslate, m_cameraRotate;
+    float m_cameraTranslateSpeed, m_cameraRotateSpeed;
 
     Mesh m_cube;
 

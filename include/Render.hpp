@@ -12,15 +12,18 @@
 
 class Render {
 public:
-    Render();
+    Render(Camera& camera);
 
     void addMesh(Mesh& mesh);
     void update(sf::Time& deltaTime);
-    void draw(sf::RenderWindow& window, Camera& camera);
+    void draw(sf::RenderWindow& window);
 
 private:
     std::vector<Mesh*> m_renderMeshes;
+    Camera& m_camera;
+
+    Vec3d lightDir, vUp, vTarget;
 
     float fTheta;
-    Mat4x4 matProj, matRotX, matRotY, matRotZ;
+    Mat4x4 matView, matProj, matRotX, matRotY, matRotZ;
 };

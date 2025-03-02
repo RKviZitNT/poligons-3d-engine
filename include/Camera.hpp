@@ -7,8 +7,8 @@ public:
     Camera();
     Camera(Vec3d direction);
 
-    Vec3d getDirection();
+    Vec3d pos;
+    Vec3d dir;
 
 private:
-    Vec3d m_direction;
 };
