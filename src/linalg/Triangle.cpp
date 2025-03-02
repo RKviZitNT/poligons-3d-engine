@@ -14,7 +14,7 @@ void Triangle::scaleZ(float f) { for (auto& v : p) { v.z *= f; } }
 Vec3d Triangle::getNormal() const {
     Vec3d ab = p[1] - p[0];
     Vec3d ac = p[2] - p[0];
-    return ab.vecProd(ac).normalize();
+    return ab.crossProd(ac).normalize();
 }
 
 Triangle& Triangle::operator*=(const Mat4x4& m) {

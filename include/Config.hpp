@@ -7,7 +7,7 @@ namespace glbl {
         constexpr int width = 1600;
         constexpr int height = 900;
 
-        constexpr int frameRate = 120;
+        constexpr int frameRate = 165;
     }
 
     namespace render {

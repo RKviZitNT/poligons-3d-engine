@@ -1,5 +1,7 @@
 #include "Render.hpp"
 
+#include <iostream>
+
 Render::Render() {}
 
 void Render::addMesh(Mesh& mesh) {
@@ -7,41 +9,12 @@ void Render::addMesh(Mesh& mesh) {
 }
 
 void Render::update(sf::Time& deltaTime) {
-    fAspectRatio = (float)glbl::window::height / (float)glbl::window::width;
-    fFovRad = 1.f / tanf(glbl::render::fFov * 0.5f / 180.f * glbl::pi);
-
     fTheta += 0.5f * deltaTime.asSeconds();
 
-    matProj = Mat4x4{
-        { fAspectRatio * fFovRad, 0, 0, 0 },
-        { 0, fFovRad, 0, 0 },
-        { 0, 0, glbl::render::fFar / (glbl::render::fFar - glbl::render::fNear), 1.0f },
-        { 0, 0, (-glbl::render::fFar * glbl::render::fNear) / (glbl::render::fFar - glbl::render::fNear), 0 }
-    };
-
-    matRotX = Mat4x4{
-        { 1, 0, 0, 0 },
-        { 0, cosf(fTheta), sinf(fTheta), 0 },
-        { 0, -sinf(fTheta), cosf(fTheta), 0 },
-        { 0, 0, 0, 1 }
-    };
-
-    matRotY = Mat4x4{
-        { cosf(fTheta), 0, sinf(fTheta), 0 },
-        { 0, 1, 0, 0 },
-        { -sinf(fTheta), 0, cosf(fTheta), 0 },
-        { 0, 0, 0, 1 }
-    };
-
-    matRotZ = Mat4x4{
-        { cosf(fTheta), sinf(fTheta), 0, 0 },
-        { -sinf(fTheta), cosf(fTheta), 0, 0 },
-        { 0, 0, 1, 0 },
-        { 0, 0, 0, 1 }
-    };
+    matProj = Mat4x4::projection(glbl::render::fNear, glbl::render::fFar, glbl::render::fFov, (float)glbl::window::height / (float)glbl::window::width);
 }
 
-void Render::draw(sf::RenderWindow& window) {
+void Render::draw(sf::RenderWindow& window, Camera& camera) {
     std::vector<Triangle> renderedPoligons;
 
     Vec3d lightDir = Vec3d(0.f, -1.f, -1.f).normalize();
@@ -50,17 +23,12 @@ void Render::draw(sf::RenderWindow& window) {
         std::vector<Triangle> polygons = mesh->getTransformedTriangles();
 
         for (auto& polygon : polygons) {
-            polygon *= matRotX;
-            polygon *= matRotY;
-            polygon *= matRotZ;
-
-            polygon.translateZ(7.f);
-
-            if (polygon.getNormal().dotProd(polygon.p[0] - Vec3d()) < 0) {
+            if (polygon.getNormal().dotProd(camera.getDirection()) < 0) {
                 polygon.intensity = std::max(0.1f, polygon.getNormal().dotProd(lightDir));
     
                 Triangle projectedPolygon = polygon;
                 projectedPolygon *= matProj;
+
                 projectedPolygon.translateX(1.f);
                 projectedPolygon.translateY(1.f);
                 projectedPolygon.scaleX(0.5f * glbl::window::width);
@@ -77,7 +45,7 @@ void Render::draw(sf::RenderWindow& window) {
     // });
 
     std::sort(renderedPoligons.begin(), renderedPoligons.end(), [](const Triangle& t1, const Triangle& t2) {
-        return std::min({t1.p[0].z, t1.p[1].z, t1.p[2].z}) > std::min({t2.p[0].z, t2.p[1].z, t2.p[2].z});
+        return std::min({ t1.p[0].z, t1.p[1].z, t1.p[2].z }) > std::min({ t2.p[0].z, t2.p[1].z, t2.p[2].z });
     });
 
     sf::ConvexShape face(3);

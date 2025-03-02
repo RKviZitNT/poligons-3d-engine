@@ -3,7 +3,11 @@
 Engine::Engine() :
     m_window(sf::VideoMode({glbl::window::width, glbl::window::height}), "3d render", sf::Style::Titlebar | sf::Style::Close),
     m_cube("resources/ship.obj")
-{}
+{
+    m_render.addMesh(m_cube);
+    m_cube.translate(Vec3d(0, 0, 10));
+    m_cube.scale(Vec3d(0.2, 0.2, 0.2));
+}
 
 void Engine::run() {
     sf::Clock clock;
@@ -11,9 +15,6 @@ void Engine::run() {
     sf::Time frameTime = sf::seconds(1.f / glbl::window::frameRate);
 
     sf::Time elapsedTimeSinceLastUpdate = sf::Time::Zero;
-
-    m_render.addMesh(m_cube);
-    m_cube.translate(Vec3d(0.f, 0.f, 1.f));
 
     while (m_window.isOpen()) {
         deltaTime = clock.restart();
@@ -57,12 +58,14 @@ void Engine::handleEvents() {
 
 void Engine::update(sf::Time& deltaTime) {
     m_render.update(deltaTime);
+
+    m_cube.rotate(Vec3d(1 * deltaTime.asSeconds(), 1 * deltaTime.asSeconds(), 1 * deltaTime.asSeconds()));
 }
 
 void Engine::draw() {
-    m_window.clear();
+    m_window.clear(sf::Color::Black);
 
-    m_render.draw(m_window);
+    m_render.draw(m_window, m_camera);
 
     m_window.display();
 }

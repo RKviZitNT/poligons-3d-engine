@@ -1,7 +1,6 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-#include <windows.h>
 #include <cmath>
 
 #include "Config.hpp"
@@ -20,7 +19,9 @@ public:
 
 private:
     sf::RenderWindow m_window;
+
     Render m_render;
+    Camera m_camera;
 
     Mesh m_cube;
 

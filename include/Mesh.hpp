@@ -18,14 +18,17 @@ public:
     Mesh(const std::string& filename);
     
     void translate(const Vec3d& offset);
-    void rotate(float angleX, float angleY, float angleZ);
+    void scale(const Vec3d& scale);
+    void rotate(const Vec3d& angle);
 
     std::vector<Triangle> getTransformedTriangles() const;
+    
 private:
     std::vector<Triangle> m_poligons;
     std::vector<Vec3d> m_vertices;
 
     Vec3d m_position;
+    float m_scaleX, m_scaleY, m_scaleZ;
     float m_angleX, m_angleY, m_angleZ;
 
     void load(std::string filename);

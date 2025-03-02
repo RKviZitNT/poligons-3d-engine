@@ -16,11 +16,11 @@ public:
 
     void addMesh(Mesh& mesh);
     void update(sf::Time& deltaTime);
-    void draw(sf::RenderWindow& window);
+    void draw(sf::RenderWindow& window, Camera& camera);
 
 private:
     std::vector<Mesh*> m_renderMeshes;
 
-    float fAspectRatio, fFovRad, fTheta;
+    float fTheta;
     Mat4x4 matProj, matRotX, matRotY, matRotZ;
 };

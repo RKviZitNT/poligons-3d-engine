@@ -3,52 +3,23 @@
 #include <initializer_list>
 #include <cmath>
 
+class Vec3d;
+
 class Mat4x4 {
 public:
-    float m[4][4] = { 0.f };
+    float m[4][4] = { 0 };
 
     Mat4x4() = default;
     Mat4x4(std::initializer_list<std::initializer_list<float>> values);
 
-    static Mat4x4 rotationX(float angle) {
-        float s = sinf(angle);
-        float c = cosf(angle);
-        return Mat4x4{
-            { 1,  0,  0,  0 },
-            { 0,  c,  s,  0 },
-            { 0, -s,  c,  0 },
-            { 0,  0,  0,  1 }
-        };
-    }
+    Mat4x4 operator*(const Mat4x4& other) const;
 
-    static Mat4x4 rotationY(float angle) {
-        float s = sinf(angle);
-        float c = cosf(angle);
-        return Mat4x4{
-            { c,  0, -s,  0 },
-            { 0,  1,  0,  0 },
-            { s,  0,  c,  0 },
-            { 0,  0,  0,  1 }
-        };
-    }
-
-    static Mat4x4 rotationZ(float angle) {
-        float s = sinf(angle);
-        float c = cosf(angle);
-        return Mat4x4{
-            { c,  s,  0,  0 },
-            {-s,  c,  0,  0 },
-            { 0,  0,  1,  0 },
-            { 0,  0,  0,  1 }
-        };
-    }
-
-    static Mat4x4 translation(float x, float y, float z) {
-        return Mat4x4{
-            { 1,  0,  0,  x },
-            { 0,  1,  0,  y },
-            { 0,  0,  1,  z },
-            { 0,  0,  0,  1     }
-        };
-    }
+    static Mat4x4 translation(float x, float y, float z);
+    static Mat4x4 scale(float scaleX, float scaleY, float scaleZ);
+    static Mat4x4 rotationX(float angle);
+    static Mat4x4 rotationY(float angle);
+    static Mat4x4 rotationZ(float angle);
+    static Mat4x4 projection(float fNear, float fFar, float fFov, float fAspectRatio);
+    static Mat4x4 pointAt(const Vec3d& pos, const Vec3d& target, const Vec3d& up);
+    static Mat4x4 inverse(const Mat4x4& m);
 };
