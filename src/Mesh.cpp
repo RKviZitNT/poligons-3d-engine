@@ -3,9 +3,9 @@
 Mesh::Mesh(const std::string& filename) {
     load(filename);
 
-    m_position = { 0, 0, 0 };
-    m_scale = { 1, 1, 1 };
-    m_angle = { 0, 0, 0 };
+    m_position = Vec3d(0);
+    m_scale = Vec3d(1);
+    m_angle = Vec3d(0);
 }
 
 void Mesh::load(std::string filename) {
@@ -22,7 +22,7 @@ void Mesh::load(std::string filename) {
     file.close();
 }
 
-void Mesh::parseLine(std::string line) {
+void Mesh::parseLine(std::string& line) {
     if (line.empty() || line[0] == '#') {
         return;
     }
@@ -38,10 +38,28 @@ void Mesh::parseLine(std::string line) {
     }
     
     if (type == "f") {
-        int v1, v2, v3;
+        std::string v1, v2, v3;
         ss >> v1 >> v2 >> v3;
-        m_poligons.emplace_back(Triangle(m_vertices[v1-1], m_vertices[v2-1], m_vertices[v3-1]));
+        int vertex1 = extractVertexIndex(v1);
+        int vertex2 = extractVertexIndex(v2);
+        int vertex3 = extractVertexIndex(v3);
+
+        m_poligons.emplace_back(
+            Triangle(
+                m_vertices[vertex1 - 1],
+                m_vertices[vertex2 - 1],
+                m_vertices[vertex3 - 1]
+            )
+        );
     }
+}
+
+int Mesh::extractVertexIndex(std::string& token) {
+    size_t slashPos = token.find('/');
+    if (slashPos != std::string::npos) {
+        return std::stoi(token.substr(0, slashPos));
+    }
+    return std::stoi(token); // Если слэша нет, возвращаем всю строку как число
 }
 
 void Mesh::translate(const Vec3d& offset) {
@@ -57,20 +75,16 @@ void Mesh::rotate(const Vec3d& angle) {
 }
 
 std::vector<Triangle> Mesh::getTransformedTriangles() const {
-    Mat4x4 matTrans, matScl, matRotX, matRotY, matRotZ;
+    Mat4x4 matTrans, matScl, matRot;
 
     matTrans = Mat4x4::translation(m_position.x, m_position.y, m_position.z);
     matScl = Mat4x4::scale(m_scale.x, m_scale.y, m_scale.z);
-    matRotX = Mat4x4::rotationX(m_angle.x);
-    matRotY = Mat4x4::rotationY(m_angle.y);
-    matRotZ = Mat4x4::rotationZ(m_angle.z);
+    matRot = Mat4x4::rotationX(m_angle.x) * Mat4x4::rotationY(m_angle.y) * Mat4x4::rotationZ(m_angle.z);
 
     std::vector<Triangle> transformedPolygons;
     for (auto polygon : m_poligons) {
         polygon *= matScl;
-        polygon *= matRotX;
-        polygon *= matRotY;
-        polygon *= matRotZ;
+        polygon *= matRot;
         polygon *= matTrans;
         transformedPolygons.emplace_back(polygon);
     }

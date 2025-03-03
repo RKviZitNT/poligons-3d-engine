@@ -1,5 +1,5 @@
-#include "linalg/Mat4x4.hpp"
-#include "linalg/Vec3d.hpp"
+#include "math/Mat4x4.hpp"
+#include "math/Vec3d.hpp"
 
 Mat4x4::Mat4x4(std::initializer_list<std::initializer_list<float>> values) {
     int i = 0, j = 0;
@@ -59,9 +59,9 @@ Mat4x4 Mat4x4::rotationY(float angle) {
     float s = sinf(angle);
     float c = cosf(angle);
     return Mat4x4{
-        { c,  0, -s,  0 },
+        { c,  0,  s,  0 },
         { 0,  1,  0,  0 },
-        { s,  0,  c,  0 },
+        {-s,  0,  c,  0 },
         { 0,  0,  0,  1 }
     };
 }

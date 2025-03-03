@@ -9,9 +9,9 @@
 
 #include "Config.hpp"
 #include "Camera.hpp"
-#include "linalg/Mat4x4.hpp"
-#include "linalg/Vec3d.hpp"
-#include "linalg/Triangle.hpp"
+#include "math/Mat4x4.hpp"
+#include "math/Vec3d.hpp"
+#include "math/Triangle.hpp"
 
 class Mesh {
 public:
@@ -30,5 +30,6 @@ private:
     Vec3d m_position, m_scale, m_angle;
 
     void load(std::string filename);
-    void parseLine(std::string line);
+    void parseLine(std::string& line);
+    int extractVertexIndex(std::string& token);
 };

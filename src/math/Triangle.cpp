@@ -1,4 +1,4 @@
-#include "linalg/Triangle.hpp"
+#include "math/Triangle.hpp"
 
 Triangle::Triangle() : p{ Vec3d(), Vec3d(), Vec3d() } {}
 Triangle::Triangle(Vec3d p1, Vec3d p2, Vec3d p3) : p{ p1, p2, p3 } {}

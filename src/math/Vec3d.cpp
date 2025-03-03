@@ -1,7 +1,8 @@
-#include "linalg/Vec3d.hpp"
+#include "math/Vec3d.hpp"
 
-Vec3d::Vec3d() : x(0.f), y(0.f), z(0.f) {}
-Vec3d::Vec3d(float x_, float y_, float z_) : x(x_), y(y_), z(z_) {}
+Vec3d::Vec3d() : x(0), y(0), z(0), w(1) {}
+Vec3d::Vec3d(float xyz) : x(xyz), y(xyz), z(xyz), w(1) {}
+Vec3d::Vec3d(float x_, float y_, float z_) : x(x_), y(y_), z(z_), w(1) {}
 
 Vec3d Vec3d::operator+(const Vec3d& v) const { return {x + v.x, y + v.y, z + v.z}; }
 Vec3d Vec3d::operator-(const Vec3d& v) const { return {x - v.x, y - v.y, z - v.z}; }
@@ -34,31 +35,17 @@ Vec3d Vec3d::normalize() const {
     if (len > 0) {
         return {x / len, y / len, z / len};
     }
-    return Vec3d();
+    return Vec3d(0);
 }
-
-// Vec3d operator*(const Vec3d& v, const Mat4x4& m) {
-//     Vec3d result;
-//     result.x = v.x * m.m[0][0] + v.y * m.m[1][0] + v.z * m.m[2][0] + v.w * m.m[3][0];
-//     result.y = v.x * m.m[0][1] + v.y * m.m[1][1] + v.z * m.m[2][1] + v.w * m.m[3][1];
-//     result.z = v.x * m.m[0][2] + v.y * m.m[1][2] + v.z * m.m[2][2] + v.w * m.m[3][2];
-//     result.w = v.x * m.m[0][3] + v.y * m.m[1][3] + v.z * m.m[2][3] + v.w * m.m[3][3];
-//     return result;
-// }
 
 Vec3d operator*(const Vec3d& v, const Mat4x4& m) {
     Vec3d result;
-
-    result.x = v.x * m.m[0][0] + v.y * m.m[1][0] + v.z * m.m[2][0] + m.m[3][0];
-    result.y = v.x * m.m[0][1] + v.y * m.m[1][1] + v.z * m.m[2][1] + m.m[3][1];
-    result.z = v.x * m.m[0][2] + v.y * m.m[1][2] + v.z * m.m[2][2] + m.m[3][2];
-    float w = v.x * m.m[0][3] + v.y * m.m[1][3] + v.z * m.m[2][3] + m.m[3][3];
-
-    if (w != 0.f) {
-        result.x /= w;
-        result.y /= w;
-        result.z /= w;
-    }
-
+    result.x = v.x * m.m[0][0] + v.y * m.m[1][0] + v.z * m.m[2][0] + v.w * m.m[3][0];
+    result.y = v.x * m.m[0][1] + v.y * m.m[1][1] + v.z * m.m[2][1] + v.w * m.m[3][1];
+    result.z = v.x * m.m[0][2] + v.y * m.m[1][2] + v.z * m.m[2][2] + v.w * m.m[3][2];
+    result.w = v.x * m.m[0][3] + v.y * m.m[1][3] + v.z * m.m[2][3] + v.w * m.m[3][3];
+    result.x /= result.w;
+    result.y /= result.w;
+    result.z /= result.w;
     return result;
 }

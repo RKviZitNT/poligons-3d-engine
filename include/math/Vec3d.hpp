@@ -6,9 +6,10 @@
 
 class Vec3d {
 public:
-    float x, y, z;
+    float x, y, z, w;
     
     Vec3d();
+    Vec3d(float xyz);
     Vec3d(float x_, float y_, float z_);
 
     Vec3d operator+(const Vec3d& v) const;

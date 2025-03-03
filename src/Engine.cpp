@@ -13,7 +13,6 @@ Engine::Engine() :
     m_render.addMesh(m_cube);
     m_cube.translate({0, 0, 2});
     m_cube.scale({0.2, 0.2, 0.2});
-    m_cube.rotate({0, 0, 10});
 }
 
 void Engine::run() {
@@ -38,7 +37,7 @@ void Engine::run() {
             sf::sleep(frameTime - elapsedTime);
         }
 
-        if (elapsedTimeSinceLastUpdate >= sf::seconds(0.1f)) {
+        if (elapsedTimeSinceLastUpdate >= sf::seconds(0.05f)) {
             float fps = 1.f / deltaTime.asSeconds(); 
             m_window.setTitle("3d render - FPS: " + std::to_string(static_cast<int>(fps)));
             elapsedTimeSinceLastUpdate = sf::Time::Zero;
@@ -47,17 +46,17 @@ void Engine::run() {
 }
 
 void Engine::handleEvents() {
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) { m_cameraTranslate += { 0,  0,  m_cameraTranslateSpeed }; }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) { m_cameraTranslate += {-m_cameraTranslateSpeed,  0,  0 }; }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) { m_cameraTranslate += { 0,  0, -m_cameraTranslateSpeed }; }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) { m_cameraTranslate += { m_cameraTranslateSpeed,  0,  0 }; }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) { m_cameraTranslate += { 0,  m_cameraTranslateSpeed,  0 }; }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift)) { m_cameraTranslate += { 0, -m_cameraTranslateSpeed,  0 }; }     
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) { m_camera.pos += m_camera.dir * m_cameraTranslateSpeed * deltaTime.asSeconds(); }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) { m_camera.pos -= m_camera.dir.crossProd({0, 1, 0}).normalize() * m_cameraTranslateSpeed * deltaTime.asSeconds(); }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) { m_camera.pos -= m_camera.dir * m_cameraTranslateSpeed * deltaTime.asSeconds();  }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) { m_camera.pos += m_camera.dir.crossProd({0, 1, 0}).normalize() * m_cameraTranslateSpeed * deltaTime.asSeconds(); }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) { m_camera.pos.y += m_cameraTranslateSpeed * deltaTime.asSeconds(); }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift)) { m_camera.pos.y -= m_cameraTranslateSpeed * deltaTime.asSeconds(); }     
 
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up)) { m_cameraRotate += { 0,  0,  0 }; }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down)) { m_cameraRotate += { 0,  0,  0 }; }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left)) { m_cameraRotate += { 0,  0,  0 }; }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right)) { m_cameraRotate += { 0,  0,  0 }; }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up)) { m_camera.fPitch += m_cameraRotateSpeed * deltaTime.asSeconds(); }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down)) { m_camera.fPitch -= m_cameraRotateSpeed * deltaTime.asSeconds(); }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left)) { m_camera.fYaw -= m_cameraRotateSpeed * deltaTime.asSeconds(); }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right)) { m_camera.fYaw += m_cameraRotateSpeed * deltaTime.asSeconds(); }
 
     std::cout << m_camera.pos.x << " " << m_camera.pos.y << " " << m_camera.pos.z << std::endl;
     std::cout << m_camera.dir.x << " " << m_camera.dir.y << " " << m_camera.dir.z << std::endl;
@@ -78,13 +77,13 @@ void Engine::handleEvents() {
 }
 
 void Engine::update() {
-    m_camera.pos += m_cameraTranslate * deltaTime.asSeconds();
-    m_camera.dir += m_cameraRotate * deltaTime.asSeconds();
-    m_cameraTranslate = m_cameraRotate = Vec3d();
+    if (m_camera.fPitch > 1.50f) m_camera.fPitch = 1.50f;
+    if (m_camera.fPitch < -1.50f) m_camera.fPitch = -1.50f;
+    m_camera.dir = Vec3d(cosf(m_camera.fYaw), sinf(m_camera.fPitch), sinf(m_camera.fYaw)).normalize();
 
     m_render.update(deltaTime);
 
-    //m_cube.rotate({1 * deltaTime.asSeconds(), 1 * deltaTime.asSeconds(), 1 * deltaTime.asSeconds()});
+    // m_cube.rotate({1 * deltaTime.asSeconds(), 1 * deltaTime.asSeconds(), 1 * deltaTime.asSeconds()});
 }
 
 void Engine::draw() {

@@ -14,9 +14,9 @@ set(HEADER_FILES
     include/Mesh.hpp
     include/Camera.hpp
     include/Render.hpp
-    include/linalg/Vec3d.hpp
-    include/linalg/Triangle.hpp
-    include/linalg/Mat4x4.hpp
+    include/math/Vec3d.hpp
+    include/math/Triangle.hpp
+    include/math/Mat4x4.hpp
 )
 
 set(SOURCE_FILES
@@ -25,9 +25,9 @@ set(SOURCE_FILES
     src/Mesh.cpp
     src/Camera.cpp
     src//Render.cpp
-    src/linalg/Vec3d.cpp
-    src/linalg/Triangle.cpp
-    src/linalg/Mat4x4.cpp
+    src/math/Vec3d.cpp
+    src/math/Triangle.cpp
+    src/math/Mat4x4.cpp
 )
 
 find_package(SFML 3 REQUIRED COMPONENTS Graphics)

@@ -13,8 +13,9 @@ void Render::update(sf::Time& deltaTime) {
 
     matProj = Mat4x4::projection(glbl::render::fNear, glbl::render::fFar, glbl::render::fFov, (float)glbl::window::height / (float)glbl::window::width);
     
-    lightDir = Vec3d(0, -1, -1).normalize();
+    lightDir = Vec3d(0, 1, 1).normalize();
 
+    // matView = Mat4x4::inverse(Mat4x4::pointAt(m_camera.pos, m_camera.pos + (Vec3d(0, 0, 1) * Mat4x4::rotationY(m_camera.fYaw)), {0, 1, 0}));
     matView = Mat4x4::inverse(Mat4x4::pointAt(m_camera.pos, m_camera.pos + m_camera.dir, {0, 1, 0}));
 }
 
@@ -25,12 +26,15 @@ void Render::draw(sf::RenderWindow& window) {
         std::vector<Triangle> polygons = mesh->getTransformedTriangles();
 
         for (auto& polygon : polygons) {
-            if (polygon.getNormal().dotProd(m_camera.dir) < 0) {
+            if (polygon.getNormal().dotProd(polygon.p[0] - m_camera.pos) < 0) {
                 polygon.intensity = std::max(0.1f, polygon.getNormal().dotProd(lightDir));
     
                 Triangle projectedPolygon = polygon;
                 projectedPolygon *= matView;
                 projectedPolygon *= matProj;
+
+                projectedPolygon.scaleX(-1);
+                projectedPolygon.scaleY(-1);
 
                 projectedPolygon.translateX(1.f);
                 projectedPolygon.translateY(1.f);
@@ -48,8 +52,13 @@ void Render::draw(sf::RenderWindow& window) {
     // });
 
     std::sort(renderedPoligons.begin(), renderedPoligons.end(), [](const Triangle& t1, const Triangle& t2) {
-        return std::max({ t1.p[0].z, t1.p[1].z, t1.p[2].z }) > std::max({ t2.p[0].z, t2.p[1].z, t2.p[2].z });
+        return (t1.p[0].z + t1.p[1].z + t1.p[2].z)/3 > (t2.p[0].z + t2.p[1].z + t2.p[2].z)/3;
     });
+
+    // std::sort(renderedPoligons.begin(), renderedPoligons.end(), [](const Triangle& t1, const Triangle& t2) {
+    //     return std::min({ t1.p[0].z, t1.p[1].z, t1.p[2].z }) > std::min({ t2.p[0].z, t2.p[1].z, t2.p[2].z });
+    // });
+    
 
     sf::ConvexShape face(3);
     sf::VertexArray edge(sf::PrimitiveType::LineStrip, 4);

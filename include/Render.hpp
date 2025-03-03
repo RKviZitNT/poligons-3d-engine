@@ -6,9 +6,9 @@
 #include "Config.hpp"
 #include "Camera.hpp"
 #include "Mesh.hpp"
-#include "linalg/Mat4x4.hpp"
-#include "linalg/Vec3d.hpp"
-#include "linalg/Triangle.hpp"
+#include "math/Mat4x4.hpp"
+#include "math/Vec3d.hpp"
+#include "math/Triangle.hpp"
 
 class Render {
 public:

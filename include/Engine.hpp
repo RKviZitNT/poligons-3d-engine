@@ -6,7 +6,7 @@
 #include "Config.hpp"
 #include "Mesh.hpp"
 #include "Render.hpp"
-#include "linalg/Mat4x4.hpp"
+#include "math/Mat4x4.hpp"
 
 class Engine {
 public:
