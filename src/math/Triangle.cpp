@@ -17,6 +17,12 @@ Vec3d Triangle::getNormal() const {
     return ab.crossProd(ac).normalize();
 }
 
+void Triangle::projectionDiv() {
+    p[0].projectionDiv();
+    p[1].projectionDiv();
+    p[2].projectionDiv();
+}
+
 Triangle& Triangle::operator*=(const Mat4x4& m) {
     *this = *this * m;
     return *this;
@@ -28,4 +34,18 @@ Triangle operator*(const Triangle& t, const Mat4x4& m) {
     result.p[1] = t.p[1] * m;
     result.p[2] = t.p[2] * m;
     return result;
+}
+
+Vec3d Triangle::intersectPlane(const Vec3d& plane_p, const Vec3d& plane_n, const Vec3d& lineStart, const Vec3d& lineEnd) {
+    Vec3d normalizedPlaneNormal = plane_n.normalize();
+    float plane_d = -normalizedPlaneNormal.dotProd(plane_p);
+
+    float ad = lineStart.dotProd(normalizedPlaneNormal);
+    float bd = lineEnd.dotProd(normalizedPlaneNormal);
+
+    float t = (-plane_d - ad) / (bd - ad);
+
+    Vec3d lineStartToEnd = lineEnd - lineStart;
+    Vec3d lineToIntersect = lineStartToEnd * t;
+    return lineStart + lineToIntersect;
 }

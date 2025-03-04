@@ -6,6 +6,7 @@
 #include "Config.hpp"
 #include "Camera.hpp"
 #include "Mesh.hpp"
+#include "Light.hpp"
 #include "math/Mat4x4.hpp"
 #include "math/Vec3d.hpp"
 #include "math/Triangle.hpp"
@@ -16,7 +17,7 @@ public:
 
     void addMesh(Mesh& mesh);
     void update(sf::Time& deltaTime);
-    void draw(sf::RenderWindow& window);
+    void draw(sf::RenderWindow& window, Light light);
 
 private:
     std::vector<Mesh*> m_renderMeshes;

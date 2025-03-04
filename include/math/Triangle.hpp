@@ -21,7 +21,11 @@ public:
 
     Vec3d getNormal() const;
 
+    void projectionDiv();
+
     Triangle& operator*=(const Mat4x4& m);
 
     friend Triangle operator*(const Triangle& t, const Mat4x4& m);
+
+    static Vec3d intersectPlane(const Vec3d& plane_p, const Vec3d& plane_n, const Vec3d& lineStart, const Vec3d& lineEnd);
 };

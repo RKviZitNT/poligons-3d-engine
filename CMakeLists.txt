@@ -13,6 +13,7 @@ set(HEADER_FILES
     include/Engine.hpp
     include/Mesh.hpp
     include/Camera.hpp
+    include/Light.hpp
     include/Render.hpp
     include/math/Vec3d.hpp
     include/math/Triangle.hpp
@@ -24,6 +25,7 @@ set(SOURCE_FILES
     src/Engine.cpp
     src/Mesh.cpp
     src/Camera.cpp
+    src/Light.cpp
     src//Render.cpp
     src/math/Vec3d.cpp
     src/math/Triangle.cpp

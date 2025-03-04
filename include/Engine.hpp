@@ -5,6 +5,7 @@
 
 #include "Config.hpp"
 #include "Mesh.hpp"
+#include "Light.hpp"
 #include "Render.hpp"
 #include "math/Mat4x4.hpp"
 
@@ -23,11 +24,11 @@ private:
 
     Render m_render;
     Camera m_camera;
-    
-    Vec3d m_cameraTranslate, m_cameraRotate;
-    float m_cameraTranslateSpeed, m_cameraRotateSpeed;
+    Light m_light;
 
     Mesh m_cube;
+    
+    float m_cameraTranslateSpeed, m_cameraRotateSpeed;
 
     float fTheta = 0;
     bool isPaused = false;

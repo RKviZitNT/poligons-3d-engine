@@ -38,5 +38,7 @@ public:
     float length() const;
     Vec3d normalize() const;
 
+    void projectionDiv();
+
     friend Vec3d operator*(const Vec3d& v, const Mat4x4& m);
 };
