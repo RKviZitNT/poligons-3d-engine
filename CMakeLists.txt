@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.29)
 project(Engine CXX)
 
 set(CMAKE_CXX_STANDARD 17)
-set(SFML_DIR "D:/libs/SFML3/lib/cmake/SFML")
 
 file(COPY 
     "resources"

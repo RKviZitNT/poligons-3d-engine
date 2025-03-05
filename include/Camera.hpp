@@ -12,21 +12,28 @@ public:
     Vec3d getPos();
     Vec3d getDir();
 
+    void translateX(float offset);
+    void translateY(float offset);
+    void translateZ(float offset);
+
     void translateForward(float offset);
     void translateBack(float offset);
+    
+    void translateForwardNoY(float offset);
+    void translateBackNoY(float offset);
+
     void translateLeft(float offset);
     void translateRight(float offset);
+
     void translateUp(float offset);
     void translateDown(float offset);
 
-    void rotateRight(float offset);
-    void rotateLeft(float offset);
-    void rotateUp(float offset);
-    void rotateDown(float offset);
+    void rotateX(float offset);
+    void rotateY(float offset);
 
 private:
     Vec3d pos, dir;
-    float fYaw = 1.55;
+    float fYaw = 1.57;
     float fPitch = 0;
 
     void update();

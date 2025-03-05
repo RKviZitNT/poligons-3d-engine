@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include <vector>
 #include <cmath>
 
 #include "Config.hpp"
@@ -8,6 +9,8 @@
 #include "Light.hpp"
 #include "Render.hpp"
 #include "math/Mat4x4.hpp"
+#include "math/Triangle.hpp"
+#include "math/Vec3d.hpp"
 
 class Engine {
 public:
@@ -22,6 +25,13 @@ private:
     sf::RenderWindow m_window;
     sf::Time deltaTime;
 
+    sf::ConvexShape face;
+    sf::VertexArray edge;
+
+    sf::Vector2i windowCenter;
+    bool m_isMouseLocked;
+    bool m_isPaused;
+
     Render m_render;
     Camera m_camera;
     Light m_light;
@@ -29,7 +39,4 @@ private:
     Mesh m_cube;
     
     float m_cameraTranslateSpeed, m_cameraRotateSpeed;
-
-    float fTheta = 0;
-    bool isPaused = false;
 };

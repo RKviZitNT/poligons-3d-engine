@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <vector>
+#include <deque>
 
 #include "Config.hpp"
 #include "Camera.hpp"
@@ -16,15 +17,12 @@ public:
     Render(Camera& camera);
 
     void addMesh(Mesh& mesh);
-    void update(sf::Time& deltaTime);
-    void draw(sf::RenderWindow& window, Light light);
+    void update();
+    std::vector<Triangle> render(Light light);
 
 private:
     std::vector<Mesh*> m_renderMeshes;
     Camera& m_camera;
 
-    Vec3d lightDir, vUp, vTarget;
-
-    float fTheta;
-    Mat4x4 matView, matProj, matRotX, matRotY, matRotZ;
+    Mat4x4 matView, matProj;
 };

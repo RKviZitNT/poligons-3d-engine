@@ -59,7 +59,7 @@ int Mesh::extractVertexIndex(std::string& token) {
     if (slashPos != std::string::npos) {
         return std::stoi(token.substr(0, slashPos));
     }
-    return std::stoi(token); // Если слэша нет, возвращаем всю строку как число
+    return std::stoi(token);
 }
 
 void Mesh::translate(const Vec3d& offset) {

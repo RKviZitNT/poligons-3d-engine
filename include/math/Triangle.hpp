@@ -27,5 +27,6 @@ public:
 
     friend Triangle operator*(const Triangle& t, const Mat4x4& m);
 
-    static Vec3d intersectPlane(const Vec3d& plane_p, const Vec3d& plane_n, const Vec3d& lineStart, const Vec3d& lineEnd);
+    static Vec3d intersectPlane(const Vec3d& planePoint, const Vec3d& planeNormal, const Vec3d& lineStart, const Vec3d& lineEnd);
+    static int clipAgainsPlane(const Vec3d& planePoint, const Vec3d& planeNormal, const Triangle& inTri, Triangle& outTri1, Triangle& outTri2);
 };
