@@ -47,3 +47,17 @@ Vec3d operator*(const Vec3d& v, const Mat4x4& m) {
     result.w = v.x * m.m[0][3] + v.y * m.m[1][3] + v.z * m.m[2][3] + v.w * m.m[3][3];
     return result;
 }
+
+Vec3d Vec3d::intersectPlane(const Vec3d& planePoint, const Vec3d& planeNormal, const Vec3d& lineStart, const Vec3d& lineEnd, float& t) {
+    Vec3d normalizedPlaneNormal = planeNormal.normalize();
+    float plane_d = -normalizedPlaneNormal.dotProd(planePoint);
+
+    float ad = lineStart.dotProd(normalizedPlaneNormal);
+    float bd = lineEnd.dotProd(normalizedPlaneNormal);
+
+    t = (-plane_d - ad) / (bd - ad);
+
+    Vec3d lineStartToEnd = lineEnd - lineStart;
+    Vec3d lineToIntersect = lineStartToEnd * t;
+    return lineStart + lineToIntersect;
+}

@@ -41,4 +41,6 @@ public:
     void projectionDiv();
 
     friend Vec3d operator*(const Vec3d& v, const Mat4x4& m);
+
+    static Vec3d intersectPlane(const Vec3d& planePoint, const Vec3d& planeNormal, const Vec3d& lineStart, const Vec3d& lineEnd, float& t);
 };

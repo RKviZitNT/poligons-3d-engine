@@ -11,6 +11,7 @@
 #include "math/Mat4x4.hpp"
 #include "math/Triangle.hpp"
 #include "math/Vec3d.hpp"
+#include "math/Vec2d.hpp"
 
 class Engine {
 public:
@@ -39,4 +40,6 @@ private:
     Mesh m_cube;
     
     float m_cameraTranslateSpeed, m_cameraRotateSpeed;
+
+    sf::Image m_image;
 };

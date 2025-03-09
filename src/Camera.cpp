@@ -23,8 +23,8 @@ void Camera::translateRight(float offset) { pos += dir.crossProd({0, 1, 0}).norm
 void Camera::translateUp(float offset) { translateY(offset); }
 void Camera::translateDown(float offset) { translateY(-offset); }
 
-void Camera::rotateX(float offset) { fYaw += offset; }
-void Camera::rotateY(float offset) { fPitch += offset; }
+void Camera::rotateHorizontal(float offset) { fYaw += offset; }
+void Camera::rotateVertical(float offset) { fPitch += offset; }
 
 // void Camera::rotateAroundPoint(const Vec3d& point, float yawOffset, float pitchOffset) {
 //     Vec3d direction = pos - point;

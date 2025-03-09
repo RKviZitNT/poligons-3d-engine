@@ -1,14 +1,40 @@
 #include "Mesh.hpp"
 
-Mesh::Mesh(const std::string& filename) {
-    load(filename);
+Mesh::Mesh(const std::string& modelFilename) {
+    loadModel(modelFilename);
 
     m_position = Vec3d(0);
     m_scale = Vec3d(1);
     m_angle = Vec3d(0);
 }
 
-void Mesh::load(std::string filename) {
+Mesh::Mesh(const std::string& modelFilename, const std::string& textureFilename) {
+    loadModel(modelFilename);
+    loadTexture(textureFilename);
+}
+
+Mesh::Mesh() {
+    m_poligons = {
+        Triangle( Vec3d(0.0f, 0.0f, 0.0f),  Vec3d(0.0f, 1.0f, 0.0f),  Vec3d(1.0f, 1.0f, 0.0f),  Vec2d(0.0f, 1.0f),  Vec2d(0.0f, 0.0f),  Vec2d(1.0f, 0.0f) ),
+        // Triangle( Vec3d(0.0f, 0.0f, 0.0f),  Vec3d(1.0f, 1.0f, 0.0f),  Vec3d(1.0f, 0.0f, 0.0f),  Vec2d(0.0f, 1.0f),  Vec2d(1.0f, 0.0f),  Vec2d(1.0f, 1.0f) ),
+        // Triangle( Vec3d(1.0f, 0.0f, 0.0f),  Vec3d(1.0f, 1.0f, 0.0f),  Vec3d(1.0f, 1.0f, 1.0f),  Vec2d(0.0f, 1.0f),  Vec2d(0.0f, 0.0f),  Vec2d(1.0f, 0.0f) ),
+        // Triangle( Vec3d(1.0f, 0.0f, 0.0f),  Vec3d(1.0f, 1.0f, 1.0f),  Vec3d(1.0f, 0.0f, 1.0f),  Vec2d(0.0f, 1.0f),  Vec2d(1.0f, 0.0f),  Vec2d(1.0f, 1.0f) ),
+        // Triangle( Vec3d(1.0f, 0.0f, 1.0f),  Vec3d(1.0f, 1.0f, 1.0f),  Vec3d(0.0f, 1.0f, 1.0f),  Vec2d(0.0f, 1.0f),  Vec2d(0.0f, 0.0f),  Vec2d(1.0f, 0.0f) ),
+        // Triangle( Vec3d(1.0f, 0.0f, 1.0f),  Vec3d(0.0f, 1.0f, 1.0f),  Vec3d(0.0f, 0.0f, 1.0f),  Vec2d(0.0f, 1.0f),  Vec2d(1.0f, 0.0f),  Vec2d(1.0f, 1.0f) ),
+        // Triangle( Vec3d(0.0f, 0.0f, 1.0f),  Vec3d(0.0f, 1.0f, 1.0f),  Vec3d(0.0f, 1.0f, 0.0f),  Vec2d(0.0f, 1.0f),  Vec2d(0.0f, 0.0f),  Vec2d(1.0f, 0.0f) ),
+        // Triangle( Vec3d(0.0f, 0.0f, 1.0f),  Vec3d(0.0f, 1.0f, 0.0f),  Vec3d(0.0f, 0.0f, 0.0f),  Vec2d(0.0f, 1.0f),  Vec2d(1.0f, 0.0f),  Vec2d(1.0f, 1.0f) ),
+        // Triangle( Vec3d(0.0f, 1.0f, 0.0f),  Vec3d(0.0f, 1.0f, 1.0f),  Vec3d(1.0f, 1.0f, 1.0f),  Vec2d(0.0f, 1.0f),  Vec2d(0.0f, 0.0f),  Vec2d(1.0f, 0.0f) ),
+        // Triangle( Vec3d(0.0f, 1.0f, 0.0f),  Vec3d(1.0f, 1.0f, 1.0f),  Vec3d(1.0f, 1.0f, 0.0f),  Vec2d(0.0f, 1.0f),  Vec2d(1.0f, 0.0f),  Vec2d(1.0f, 1.0f) ),
+        // Triangle( Vec3d(1.0f, 0.0f, 1.0f),  Vec3d(0.0f, 0.0f, 1.0f),  Vec3d(0.0f, 0.0f, 0.0f),  Vec2d(0.0f, 1.0f),  Vec2d(0.0f, 0.0f),  Vec2d(1.0f, 0.0f) ),
+        // Triangle( Vec3d(1.0f, 0.0f, 1.0f),  Vec3d(0.0f, 0.0f, 0.0f),  Vec3d(1.0f, 0.0f, 0.0f),  Vec2d(0.0f, 1.0f),  Vec2d(1.0f, 0.0f),  Vec2d(1.0f, 1.0f) ),
+    };
+
+    m_position = Vec3d(0);
+    m_scale = Vec3d(1);
+    m_angle = Vec3d(0);
+}
+
+void Mesh::loadModel(std::string filename) {
     std::ifstream file(filename);
     if (!file.is_open()) {
         throw std::runtime_error("Failed to open obj file: " + filename);
@@ -20,6 +46,10 @@ void Mesh::load(std::string filename) {
     }
 
     file.close();
+}
+
+void Mesh::loadTexture(std::string filename) {
+    return;
 }
 
 void Mesh::parseLine(std::string& line) {

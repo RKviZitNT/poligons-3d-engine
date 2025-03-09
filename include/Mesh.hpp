@@ -9,13 +9,16 @@
 
 #include "Config.hpp"
 #include "Camera.hpp"
+#include "Color.hpp"
 #include "math/Mat4x4.hpp"
 #include "math/Vec3d.hpp"
 #include "math/Triangle.hpp"
 
 class Mesh {
 public:
-    Mesh(const std::string& filename);
+    Mesh(const std::string& modelFilename);
+    Mesh(const std::string& modelFilename, const std::string& textureFilename);
+    Mesh();
     
     void translate(const Vec3d& offset);
     void scale(const Vec3d& scale);
@@ -29,7 +32,8 @@ private:
 
     Vec3d m_position, m_scale, m_angle;
 
-    void load(std::string filename);
+    void loadModel(std::string filename);
+    void loadTexture(std::string filename);
     void parseLine(std::string& line);
     int extractVertexIndex(std::string& token);
 };

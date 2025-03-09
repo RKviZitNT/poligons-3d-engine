@@ -28,8 +28,8 @@ public:
     void translateUp(float offset);
     void translateDown(float offset);
 
-    void rotateX(float offset);
-    void rotateY(float offset);
+    void rotateHorizontal(float offset);
+    void rotateVertical(float offset);
 
 private:
     Vec3d pos, dir;

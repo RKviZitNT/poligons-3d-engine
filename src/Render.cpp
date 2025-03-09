@@ -1,8 +1,5 @@
 #include "Render.hpp"
 
-#include <iostream>
-#include <cfloat>
-
 Render::Render(Camera& camera) : m_camera(camera) {}
 
 void Render::addMesh(Mesh& mesh) {
@@ -22,7 +19,7 @@ std::vector<Triangle> Render::render(Light light) {
 
         for (auto& polygon : polygons) {
             if (glbl::render::backFaceVisible || polygon.getNormal().dotProd(polygon.p[0] - m_camera.getPos()) < 0) {
-                polygon.intensity = std::max(0.1f, polygon.getNormal().dotProd(light.getDir()));
+                polygon.col.setBrightness(std::max(0.15f, polygon.getNormal().dotProd(light.getDir())));
     
                 Triangle projectedPolygon = polygon;
                 projectedPolygon *= matView;
@@ -42,7 +39,6 @@ std::vector<Triangle> Render::render(Light light) {
                     projectedPolygon.scaleX(0.5f * glbl::window::width);
                     projectedPolygon.scaleY(0.5f * glbl::window::height);
         
-                    projectedPolygon.intensity = polygon.intensity;
                     projectedPolygons.emplace_back(projectedPolygon);
                 }
             }
@@ -81,7 +77,7 @@ std::vector<Triangle> Render::render(Light light) {
     
             newPolygons = triangles.size();
         }
-
+        
         for (const auto& tri : triangles) { renderedPolygons.emplace_back(tri); }
     }
 
