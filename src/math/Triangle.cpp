@@ -129,7 +129,7 @@ int Triangle::clipAgainsPlane(const Vec3d& planePoint, const Vec3d& planeNormal,
     return true;
 }
 
-void Triangle::texturedTriangle(int x1, int y1, int u1, int v1, int x2, int y2, int u2, int v2, int x3, int y3, int u3, int v3, sf::Image *image, sf::RenderWindow& window) {
+void Triangle::texturedTriangle(int x1, int y1, float u1, float v1, int x2, int y2, float u2, float v2, int x3, int y3, float u3, float v3, sf::Image *image, sf::RenderWindow& window) {
     // Сортировка вершин по Y
     if (y2 < y1) { std::swap(y1, y2); std::swap(x1, x2); std::swap(u1, u2); std::swap(v1, v2); }
     if (y3 < y1) { std::swap(y1, y3); std::swap(x1, x3); std::swap(u1, u3); std::swap(v1, v3); }

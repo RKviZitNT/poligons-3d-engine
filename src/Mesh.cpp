@@ -16,17 +16,17 @@ Mesh::Mesh(const std::string& modelFilename, const std::string& textureFilename)
 Mesh::Mesh() {
     m_poligons = {
         Triangle( Vec3d(0.0f, 0.0f, 0.0f),  Vec3d(0.0f, 1.0f, 0.0f),  Vec3d(1.0f, 1.0f, 0.0f),  Vec2d(0.0f, 1.0f),  Vec2d(0.0f, 0.0f),  Vec2d(1.0f, 0.0f) ),
-        // Triangle( Vec3d(0.0f, 0.0f, 0.0f),  Vec3d(1.0f, 1.0f, 0.0f),  Vec3d(1.0f, 0.0f, 0.0f),  Vec2d(0.0f, 1.0f),  Vec2d(1.0f, 0.0f),  Vec2d(1.0f, 1.0f) ),
-        // Triangle( Vec3d(1.0f, 0.0f, 0.0f),  Vec3d(1.0f, 1.0f, 0.0f),  Vec3d(1.0f, 1.0f, 1.0f),  Vec2d(0.0f, 1.0f),  Vec2d(0.0f, 0.0f),  Vec2d(1.0f, 0.0f) ),
-        // Triangle( Vec3d(1.0f, 0.0f, 0.0f),  Vec3d(1.0f, 1.0f, 1.0f),  Vec3d(1.0f, 0.0f, 1.0f),  Vec2d(0.0f, 1.0f),  Vec2d(1.0f, 0.0f),  Vec2d(1.0f, 1.0f) ),
-        // Triangle( Vec3d(1.0f, 0.0f, 1.0f),  Vec3d(1.0f, 1.0f, 1.0f),  Vec3d(0.0f, 1.0f, 1.0f),  Vec2d(0.0f, 1.0f),  Vec2d(0.0f, 0.0f),  Vec2d(1.0f, 0.0f) ),
-        // Triangle( Vec3d(1.0f, 0.0f, 1.0f),  Vec3d(0.0f, 1.0f, 1.0f),  Vec3d(0.0f, 0.0f, 1.0f),  Vec2d(0.0f, 1.0f),  Vec2d(1.0f, 0.0f),  Vec2d(1.0f, 1.0f) ),
-        // Triangle( Vec3d(0.0f, 0.0f, 1.0f),  Vec3d(0.0f, 1.0f, 1.0f),  Vec3d(0.0f, 1.0f, 0.0f),  Vec2d(0.0f, 1.0f),  Vec2d(0.0f, 0.0f),  Vec2d(1.0f, 0.0f) ),
-        // Triangle( Vec3d(0.0f, 0.0f, 1.0f),  Vec3d(0.0f, 1.0f, 0.0f),  Vec3d(0.0f, 0.0f, 0.0f),  Vec2d(0.0f, 1.0f),  Vec2d(1.0f, 0.0f),  Vec2d(1.0f, 1.0f) ),
-        // Triangle( Vec3d(0.0f, 1.0f, 0.0f),  Vec3d(0.0f, 1.0f, 1.0f),  Vec3d(1.0f, 1.0f, 1.0f),  Vec2d(0.0f, 1.0f),  Vec2d(0.0f, 0.0f),  Vec2d(1.0f, 0.0f) ),
-        // Triangle( Vec3d(0.0f, 1.0f, 0.0f),  Vec3d(1.0f, 1.0f, 1.0f),  Vec3d(1.0f, 1.0f, 0.0f),  Vec2d(0.0f, 1.0f),  Vec2d(1.0f, 0.0f),  Vec2d(1.0f, 1.0f) ),
-        // Triangle( Vec3d(1.0f, 0.0f, 1.0f),  Vec3d(0.0f, 0.0f, 1.0f),  Vec3d(0.0f, 0.0f, 0.0f),  Vec2d(0.0f, 1.0f),  Vec2d(0.0f, 0.0f),  Vec2d(1.0f, 0.0f) ),
-        // Triangle( Vec3d(1.0f, 0.0f, 1.0f),  Vec3d(0.0f, 0.0f, 0.0f),  Vec3d(1.0f, 0.0f, 0.0f),  Vec2d(0.0f, 1.0f),  Vec2d(1.0f, 0.0f),  Vec2d(1.0f, 1.0f) ),
+        Triangle( Vec3d(0.0f, 0.0f, 0.0f),  Vec3d(1.0f, 1.0f, 0.0f),  Vec3d(1.0f, 0.0f, 0.0f),  Vec2d(0.0f, 1.0f),  Vec2d(1.0f, 0.0f),  Vec2d(1.0f, 1.0f) ),
+        Triangle( Vec3d(1.0f, 0.0f, 0.0f),  Vec3d(1.0f, 1.0f, 0.0f),  Vec3d(1.0f, 1.0f, 1.0f),  Vec2d(0.0f, 1.0f),  Vec2d(0.0f, 0.0f),  Vec2d(1.0f, 0.0f) ),
+        Triangle( Vec3d(1.0f, 0.0f, 0.0f),  Vec3d(1.0f, 1.0f, 1.0f),  Vec3d(1.0f, 0.0f, 1.0f),  Vec2d(0.0f, 1.0f),  Vec2d(1.0f, 0.0f),  Vec2d(1.0f, 1.0f) ),
+        Triangle( Vec3d(1.0f, 0.0f, 1.0f),  Vec3d(1.0f, 1.0f, 1.0f),  Vec3d(0.0f, 1.0f, 1.0f),  Vec2d(0.0f, 1.0f),  Vec2d(0.0f, 0.0f),  Vec2d(1.0f, 0.0f) ),
+        Triangle( Vec3d(1.0f, 0.0f, 1.0f),  Vec3d(0.0f, 1.0f, 1.0f),  Vec3d(0.0f, 0.0f, 1.0f),  Vec2d(0.0f, 1.0f),  Vec2d(1.0f, 0.0f),  Vec2d(1.0f, 1.0f) ),
+        Triangle( Vec3d(0.0f, 0.0f, 1.0f),  Vec3d(0.0f, 1.0f, 1.0f),  Vec3d(0.0f, 1.0f, 0.0f),  Vec2d(0.0f, 1.0f),  Vec2d(0.0f, 0.0f),  Vec2d(1.0f, 0.0f) ),
+        Triangle( Vec3d(0.0f, 0.0f, 1.0f),  Vec3d(0.0f, 1.0f, 0.0f),  Vec3d(0.0f, 0.0f, 0.0f),  Vec2d(0.0f, 1.0f),  Vec2d(1.0f, 0.0f),  Vec2d(1.0f, 1.0f) ),
+        Triangle( Vec3d(0.0f, 1.0f, 0.0f),  Vec3d(0.0f, 1.0f, 1.0f),  Vec3d(1.0f, 1.0f, 1.0f),  Vec2d(0.0f, 1.0f),  Vec2d(0.0f, 0.0f),  Vec2d(1.0f, 0.0f) ),
+        Triangle( Vec3d(0.0f, 1.0f, 0.0f),  Vec3d(1.0f, 1.0f, 1.0f),  Vec3d(1.0f, 1.0f, 0.0f),  Vec2d(0.0f, 1.0f),  Vec2d(1.0f, 0.0f),  Vec2d(1.0f, 1.0f) ),
+        Triangle( Vec3d(1.0f, 0.0f, 1.0f),  Vec3d(0.0f, 0.0f, 1.0f),  Vec3d(0.0f, 0.0f, 0.0f),  Vec2d(0.0f, 1.0f),  Vec2d(0.0f, 0.0f),  Vec2d(1.0f, 0.0f) ),
+        Triangle( Vec3d(1.0f, 0.0f, 1.0f),  Vec3d(0.0f, 0.0f, 0.0f),  Vec3d(1.0f, 0.0f, 0.0f),  Vec2d(0.0f, 1.0f),  Vec2d(1.0f, 0.0f),  Vec2d(1.0f, 1.0f) ),
     };
 
     m_position = Vec3d(0);

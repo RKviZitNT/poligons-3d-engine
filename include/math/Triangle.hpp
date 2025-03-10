@@ -38,5 +38,5 @@ public:
     friend Triangle operator*(const Triangle& t, const Mat4x4& m);
 
     static int clipAgainsPlane(const Vec3d& planePoint, const Vec3d& planeNormal, const Triangle& inTri, Triangle& outTri1, Triangle& outTri2);
-    static void texturedTriangle(int x1, int y1, int u1, int v1, int x2, int y2, int u2, int v2, int x3, int y3, int u3, int v3, sf::Image *image, sf::RenderWindow& window);
+    static void texturedTriangle(int x1, int y1, float u1, float v1, int x2, int y2, float u2, float v2, int x3, int y3, float u3, float v3, sf::Image *image, sf::RenderWindow& window);
 };

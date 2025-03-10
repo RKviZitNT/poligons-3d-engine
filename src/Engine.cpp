@@ -4,8 +4,8 @@ Engine::Engine() :
     m_window(sf::VideoMode({glbl::window::width, glbl::window::height}), "3d render", sf::Style::Titlebar | sf::Style::Close),
     m_isPaused(false),
     m_isMouseLocked(true),
-    m_render(m_camera),
-    m_cube("resources/models/mountains.obj")
+    m_render(m_camera)
+    // m_cube("resources/models/mountains.obj")
 {
     m_window.setMouseCursorVisible(!m_isMouseLocked);
     windowCenter = sf::Vector2i(m_window.getSize().x / 2, m_window.getSize().y / 2);
@@ -18,7 +18,7 @@ Engine::Engine() :
     m_render.addMesh(m_cube);
     m_light.setDir({0.8, 1, -0.5});
 
-    if (!m_image.loadFromFile("resources/textures/mario.jpg")) {
+    if (!m_image.loadFromFile("resources/textures/cobblestone.png")) {
         throw std::runtime_error("Failed to load texture");
     }
 }
@@ -126,15 +126,14 @@ void Engine::draw() {
                 triangles.append(sf::Vertex{sf::Vector2f(polygon.p[1].x, polygon.p[1].y), faceColor});
                 triangles.append(sf::Vertex{sf::Vector2f(polygon.p[2].x, polygon.p[2].y), faceColor});
             }
-
-            if (glbl::render::edgeVisible) {
-                edges.append(sf::Vertex{sf::Vector2f(polygon.p[0].x, polygon.p[0].y), edgeColor});
-                edges.append(sf::Vertex{sf::Vector2f(polygon.p[1].x, polygon.p[1].y), edgeColor});
-                edges.append(sf::Vertex{sf::Vector2f(polygon.p[1].x, polygon.p[1].y), edgeColor});
-                edges.append(sf::Vertex{sf::Vector2f(polygon.p[2].x, polygon.p[2].y), edgeColor});
-                edges.append(sf::Vertex{sf::Vector2f(polygon.p[2].x, polygon.p[2].y), edgeColor});
-                edges.append(sf::Vertex{sf::Vector2f(polygon.p[0].x, polygon.p[0].y), edgeColor});
-            }
+        }
+        if (glbl::render::edgeVisible) {
+            edges.append(sf::Vertex{sf::Vector2f(polygon.p[0].x, polygon.p[0].y), edgeColor});
+            edges.append(sf::Vertex{sf::Vector2f(polygon.p[1].x, polygon.p[1].y), edgeColor});
+            edges.append(sf::Vertex{sf::Vector2f(polygon.p[1].x, polygon.p[1].y), edgeColor});
+            edges.append(sf::Vertex{sf::Vector2f(polygon.p[2].x, polygon.p[2].y), edgeColor});
+            edges.append(sf::Vertex{sf::Vector2f(polygon.p[2].x, polygon.p[2].y), edgeColor});
+            edges.append(sf::Vertex{sf::Vector2f(polygon.p[0].x, polygon.p[0].y), edgeColor});
         }
     }
 
