@@ -6,7 +6,8 @@
 
 class Vec3d {
 public:
-    float x, y, z, w;
+    float x, y, z;
+    float w;
     
     Vec3d();
     Vec3d(float xyz);
@@ -43,4 +44,6 @@ public:
     friend Vec3d operator*(const Vec3d& v, const Mat4x4& m);
 
     static Vec3d intersectPlane(const Vec3d& planePoint, const Vec3d& planeNormal, const Vec3d& lineStart, const Vec3d& lineEnd, float& t);
+
+private:
 };

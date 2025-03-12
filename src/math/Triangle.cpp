@@ -88,10 +88,12 @@ int Triangle::clipAgainsPlane(const Vec3d& planePoint, const Vec3d& planeNormal,
         outTri1.p[1] = Vec3d::intersectPlane(planePoint, normalizedPlaneNormal, *insidePoints[0], *outsidePoints[0], t);
         outTri1.t[1].u = insideTex[0]->u + t * (outsideTex[0]->u - insideTex[0]->u);
         outTri1.t[1].v = insideTex[0]->v + t * (outsideTex[0]->v - insideTex[0]->v);
+        outTri1.t[1].w = insideTex[0]->w + t * (outsideTex[0]->w - insideTex[0]->w);
 
         outTri1.p[2] = Vec3d::intersectPlane(planePoint, normalizedPlaneNormal, *insidePoints[0], *outsidePoints[1], t);
         outTri1.t[2].u = insideTex[0]->u + t * (outsideTex[1]->u - insideTex[0]->u);
         outTri1.t[2].v = insideTex[0]->v + t * (outsideTex[1]->v - insideTex[0]->v);
+        outTri1.t[2].w = insideTex[0]->w + t * (outsideTex[1]->w - insideTex[0]->w);
 
         return 1;
     }
@@ -110,6 +112,7 @@ int Triangle::clipAgainsPlane(const Vec3d& planePoint, const Vec3d& planeNormal,
         outTri1.p[2] = Vec3d::intersectPlane(planePoint, normalizedPlaneNormal, *insidePoints[0], *outsidePoints[0], t);
         outTri1.t[2].u = insideTex[0]->u + t * (outsideTex[0]->u - insideTex[0]->u);
         outTri1.t[2].v = insideTex[0]->v + t * (outsideTex[0]->v - insideTex[0]->v);
+        outTri1.t[2].w = insideTex[0]->w + t * (outsideTex[0]->w - insideTex[0]->w);
 
         outTri2 = inTri;
 
@@ -122,6 +125,7 @@ int Triangle::clipAgainsPlane(const Vec3d& planePoint, const Vec3d& planeNormal,
         outTri2.p[2] = Vec3d::intersectPlane(planePoint, normalizedPlaneNormal, *insidePoints[1], *outsidePoints[0], t);
         outTri2.t[2].u = insideTex[1]->u + t * (outsideTex[0]->u - insideTex[1]->u);
         outTri2.t[2].v = insideTex[1]->v + t * (outsideTex[0]->v - insideTex[1]->v);
+        outTri2.t[2].w = insideTex[1]->w + t * (outsideTex[0]->w - insideTex[1]->w);
 
         return 2;
     }
@@ -129,42 +133,50 @@ int Triangle::clipAgainsPlane(const Vec3d& planePoint, const Vec3d& planeNormal,
     return true;
 }
 
-void Triangle::texturedTriangle(int x1, int y1, float u1, float v1, int x2, int y2, float u2, float v2, int x3, int y3, float u3, float v3, sf::Image *image, sf::RenderWindow& window) {
-    // Сортировка вершин по Y
-    if (y2 < y1) { std::swap(y1, y2); std::swap(x1, x2); std::swap(u1, u2); std::swap(v1, v2); }
-    if (y3 < y1) { std::swap(y1, y3); std::swap(x1, x3); std::swap(u1, u3); std::swap(v1, v3); }
-    if (y3 < y2) { std::swap(y2, y3); std::swap(x2, x3); std::swap(u2, u3); std::swap(v2, v3); }
+void Triangle::texturedTriangle(int x1, int y1, float u1, float v1, float w1,
+    int x2, int y2, float u2, float v2, float w2,
+    int x3, int y3, float u3, float v3, float w3,
+    sf::Image *image, sf::RenderWindow& window)
+{
+    if (y2 < y1) { std::swap(y1, y2); std::swap(x1, x2); std::swap(u1, u2); std::swap(v1, v2); std::swap(w1, w2); }
+    if (y3 < y1) { std::swap(y1, y3); std::swap(x1, x3); std::swap(u1, u3); std::swap(v1, v3); std::swap(w1, w3); }
+    if (y3 < y2) { std::swap(y2, y3); std::swap(x2, x3); std::swap(u2, u3); std::swap(v2, v3); std::swap(w2, w3); }
 
-    // Вычисление шагов для интерполяции
     int dy1 = y2 - y1;
     int dx1 = x2 - x1;
     float du1 = u2 - u1;
     float dv1 = v2 - v1;
+    float dw1 = w2 - w1;
 
     int dy2 = y3 - y1;
     int dx2 = x3 - x1;
     float du2 = u3 - u1;
     float dv2 = v3 - v1;
+    float dw2 = w3 - w1;
 
-    float texU, texV;
+    float texU, texV, texW;
 
     float daxStep = 0, dbxStep = 0;
     float du1Step = 0, dv1Step = 0;
     float du2Step = 0, dv2Step = 0;
+    float dw1Step = 0, dw2Step = 0;
 
     if (dy1) daxStep = dx1 / (float)std::abs(dy1);
     if (dy2) dbxStep = dx2 / (float)std::abs(dy2);
 
     if (dy1) du1Step = du1 / (float)std::abs(dy1);
     if (dy1) dv1Step = dv1 / (float)std::abs(dy1);
+    if (dy1) dw1Step = dw1 / (float)std::abs(dy1);
 
     if (dy2) du2Step = du2 / (float)std::abs(dy2);
     if (dy2) dv2Step = dv2 / (float)std::abs(dy2);
+    if (dy2) dw2Step = dw2 / (float)std::abs(dy2);
 
-    // Создаём VertexArray для хранения всех пикселей
     sf::VertexArray pixels(sf::PrimitiveType::Points);
 
-    // Отрисовка верхней части треугольника
+    unsigned int texWidth = image->getSize().x;
+    unsigned int texHeight = image->getSize().y;
+
     if (dy1) {
         for (int i = y1; i <= y2; i++) {
             int ax = x1 + (float)(i - y1) * daxStep;
@@ -172,14 +184,17 @@ void Triangle::texturedTriangle(int x1, int y1, float u1, float v1, int x2, int 
 
             float texSu = u1 + (float)(i - y1) * du1Step;
             float texSv = v1 + (float)(i - y1) * dv1Step;
+            float texSw = w1 + (float)(i - y1) * dw1Step;
 
             float texEu = u1 + (float)(i - y1) * du2Step;
             float texEv = v1 + (float)(i - y1) * dv2Step;
+            float texEw = w1 + (float)(i - y1) * dw2Step;
 
-            if (ax > bx) { std::swap(ax, bx); std::swap(texSu, texEu); std::swap(texSv, texEv); }
+            if (ax > bx) { std::swap(ax, bx); std::swap(texSu, texEu); std::swap(texSv, texEv); std::swap(texSw, texEw); }
 
             texU = texSu;
             texV = texSv;
+            texW = texSw;
 
             float tstep = 1.f / ((float)(bx - ax));
             float t = 0.f;
@@ -187,11 +202,12 @@ void Triangle::texturedTriangle(int x1, int y1, float u1, float v1, int x2, int 
             for (int j = ax; j < bx; j++) {
                 texU = (1.f - t) * texSu + t * texEu;
                 texV = (1.f - t) * texSv + t * texEv;
+                texW = (1.f - t) * texSw + t * texEw;
 
-                unsigned int u = static_cast<unsigned int>(texU * image->getSize().x) % image->getSize().x;
-                unsigned int v = static_cast<unsigned int>(texV * image->getSize().y) % image->getSize().y;
+                float wInv = 1.0f / texW;
+                unsigned int u = static_cast<unsigned int>(texU * wInv * texWidth) % texWidth;
+                unsigned int v = static_cast<unsigned int>(texV * wInv * texHeight) % texHeight;
 
-                // Добавляем пиксель в VertexArray
                 pixels.append(sf::Vertex{sf::Vector2f(j, i), image->getPixel({u, v})});
 
                 t += tstep;
@@ -199,11 +215,11 @@ void Triangle::texturedTriangle(int x1, int y1, float u1, float v1, int x2, int 
         }
     }
 
-    // Отрисовка нижней части треугольника
     dy1 = y3 - y2;
     dx1 = x3 - x2;
     du1 = u3 - u2;
     dv1 = v3 - v2;
+    dw1 = w3 - w2;
 
     if (dy1) daxStep = dx1 / (float)std::abs(dy1);
     if (dy2) dbxStep = dx2 / (float)std::abs(dy2);
@@ -211,6 +227,7 @@ void Triangle::texturedTriangle(int x1, int y1, float u1, float v1, int x2, int 
     du1Step = 0; dv1Step = 0;
     if (dy1) du1Step = du1 / (float)std::abs(dy1);
     if (dy1) dv1Step = dv1 / (float)std::abs(dy1);
+    if (dy1) dw1Step = dw1 / (float)std::abs(dy1);
 
     if (dy1) {
         for (int i = y2; i <= y3; i++) {
@@ -219,14 +236,17 @@ void Triangle::texturedTriangle(int x1, int y1, float u1, float v1, int x2, int 
 
             float texSu = u2 + (float)(i - y2) * du1Step;
             float texSv = v2 + (float)(i - y2) * dv1Step;
+            float texSw = w2 + (float)(i - y2) * dw1Step;
 
             float texEu = u1 + (float)(i - y1) * du2Step;
             float texEv = v1 + (float)(i - y1) * dv2Step;
+            float texEw = w1 + (float)(i - y1) * dw2Step;
 
-            if (ax > bx) { std::swap(ax, bx); std::swap(texSu, texEu); std::swap(texSv, texEv); }
+            if (ax > bx) { std::swap(ax, bx); std::swap(texSu, texEu); std::swap(texSv, texEv); std::swap(texSw, texEw); }
 
             texU = texSu;
             texV = texSv;
+            texW = texSw;
 
             float tstep = 1.f / ((float)(bx - ax));
             float t = 0.f;
@@ -234,11 +254,12 @@ void Triangle::texturedTriangle(int x1, int y1, float u1, float v1, int x2, int 
             for (int j = ax; j < bx; j++) {
                 texU = (1.f - t) * texSu + t * texEu;
                 texV = (1.f - t) * texSv + t * texEv;
+                texW = (1.f - t) * texSw + t * texEw;
                 
-                unsigned int u = static_cast<unsigned int>(texU * image->getSize().x) % image->getSize().x;
-                unsigned int v = static_cast<unsigned int>(texV * image->getSize().y) % image->getSize().y;
+                float wInv = 1.0f / texW;
+                unsigned int u = static_cast<unsigned int>(texU * wInv * texWidth) % texWidth;
+                unsigned int v = static_cast<unsigned int>(texV * wInv * texHeight) % texHeight;
 
-                // Добавляем пиксель в VertexArray
                 pixels.append(sf::Vertex{sf::Vector2f(j, i), image->getPixel({u, v})});
 
                 t += tstep;
@@ -246,6 +267,5 @@ void Triangle::texturedTriangle(int x1, int y1, float u1, float v1, int x2, int 
         }
     }
 
-    // Отрисовка всех пикселей за один вызов
     window.draw(pixels);
 }

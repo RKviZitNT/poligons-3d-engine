@@ -18,7 +18,7 @@ Engine::Engine() :
     m_render.addMesh(m_cube);
     m_light.setDir({0.8, 1, -0.5});
 
-    if (!m_image.loadFromFile("resources/textures/cobblestone.png")) {
+    if (!m_image.loadFromFile("resources/textures/bedrock.png")) {
         throw std::runtime_error("Failed to load texture");
     }
 }
@@ -99,6 +99,8 @@ void Engine::handleEvents() {
 
 void Engine::update() {
     m_render.update();
+
+    m_cube.rotate({1 * deltaTime.asSeconds(), 1 * deltaTime.asSeconds(), 0});
 }
 
 void Engine::draw() {
@@ -113,9 +115,9 @@ void Engine::draw() {
     for (const auto& polygon : polygons) {
         if (glbl::render::textureVisible && polygon.t) {
             Triangle::texturedTriangle(
-                polygon.p[0].x, polygon.p[0].y, polygon.t[0].u, polygon.t[0].v,
-                polygon.p[1].x, polygon.p[1].y, polygon.t[1].u, polygon.t[1].v,
-                polygon.p[2].x, polygon.p[2].y, polygon.t[2].u, polygon.t[2].v,
+                polygon.p[0].x, polygon.p[0].y, polygon.t[0].u, polygon.t[0].v, polygon.t[0].w,
+                polygon.p[1].x, polygon.p[1].y, polygon.t[1].u, polygon.t[1].v, polygon.t[1].w,
+                polygon.p[2].x, polygon.p[2].y, polygon.t[2].u, polygon.t[2].v, polygon.t[2].w,
                 &m_image, m_window
             );
         } else {

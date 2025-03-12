@@ -29,6 +29,17 @@ std::vector<Triangle> Render::render(Light light) {
                 clippedPolygons = Triangle::clipAgainsPlane({0, 0, 0.1}, {0, 0, 1}, projectedPolygon, clipped[0], clipped[1]);
                 for (int i = 0; i < clippedPolygons; i++) {
                     projectedPolygon = clipped[i] * matProj;
+
+                    projectedPolygon.t[0].u = projectedPolygon.t[0].u / projectedPolygon.p[0].w;
+                    projectedPolygon.t[1].u = projectedPolygon.t[1].u / projectedPolygon.p[1].w;
+                    projectedPolygon.t[2].u = projectedPolygon.t[2].u / projectedPolygon.p[2].w;
+                    projectedPolygon.t[0].v = projectedPolygon.t[0].v / projectedPolygon.p[0].w;
+                    projectedPolygon.t[1].v = projectedPolygon.t[1].v / projectedPolygon.p[1].w;
+                    projectedPolygon.t[2].v = projectedPolygon.t[2].v / projectedPolygon.p[2].w;
+                    projectedPolygon.t[0].w = 1.f / projectedPolygon.p[0].w;
+                    projectedPolygon.t[1].w = 1.f / projectedPolygon.p[1].w;
+                    projectedPolygon.t[2].w = 1.f / projectedPolygon.p[2].w;
+                    
                     projectedPolygon.projectionDiv();
 
                     projectedPolygon.scaleX(-1);
