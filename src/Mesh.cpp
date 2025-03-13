@@ -14,7 +14,7 @@ Mesh::Mesh(const std::string& modelFilename, const std::string& textureFilename)
 }
 
 Mesh::Mesh() {
-    m_poligons = {
+    m_triangles = {
         Triangle( Vec3d(0.0f, 0.0f, 0.0f),  Vec3d(0.0f, 1.0f, 0.0f),  Vec3d(1.0f, 1.0f, 0.0f),  Vec2d(0.0f, 1.0f),  Vec2d(0.0f, 0.0f),  Vec2d(1.0f, 0.0f) ),
         Triangle( Vec3d(0.0f, 0.0f, 0.0f),  Vec3d(1.0f, 1.0f, 0.0f),  Vec3d(1.0f, 0.0f, 0.0f),  Vec2d(0.0f, 1.0f),  Vec2d(1.0f, 0.0f),  Vec2d(1.0f, 1.0f) ),
         Triangle( Vec3d(1.0f, 0.0f, 0.0f),  Vec3d(1.0f, 1.0f, 0.0f),  Vec3d(1.0f, 1.0f, 1.0f),  Vec2d(0.0f, 1.0f),  Vec2d(0.0f, 0.0f),  Vec2d(1.0f, 0.0f) ),
@@ -74,7 +74,7 @@ void Mesh::parseLine(std::string& line) {
         int vertex2 = extractVertexIndex(v2);
         int vertex3 = extractVertexIndex(v3);
 
-        m_poligons.emplace_back(
+        m_triangles.emplace_back(
             Triangle(
                 m_vertices[vertex1 - 1],
                 m_vertices[vertex2 - 1],
@@ -111,13 +111,13 @@ std::vector<Triangle> Mesh::getTransformedTriangles() const {
     matScl = Mat4x4::scale(m_scale.x, m_scale.y, m_scale.z);
     matRot = Mat4x4::rotationX(m_angle.x) * Mat4x4::rotationY(m_angle.y) * Mat4x4::rotationZ(m_angle.z);
 
-    std::vector<Triangle> transformedPolygons;
-    for (auto polygon : m_poligons) {
-        polygon *= matScl;
-        polygon *= matRot;
-        polygon *= matTrans;
-        transformedPolygons.emplace_back(polygon);
+    std::vector<Triangle> transformedTriangles;
+    for (auto triangle : m_triangles) {
+        triangle *= matScl;
+        triangle *= matRot;
+        triangle *= matTrans;
+        transformedTriangles.emplace_back(triangle);
     }
 
-    return transformedPolygons;
+    return transformedTriangles;
 }

@@ -106,45 +106,45 @@ void Engine::update() {
 void Engine::draw() {
     m_window.clear(sf::Color::Black);
 
-    sf::VertexArray triangles(sf::PrimitiveType::Triangles);
-    sf::VertexArray edges(sf::PrimitiveType::Lines);
+    sf::VertexArray drawingTriangles(sf::PrimitiveType::Triangles);
+    sf::VertexArray drawingEdges(sf::PrimitiveType::Lines);
     sf::Color edgeColor(255, 128, 0);
 
-    std::vector<Triangle> polygons = m_render.render(m_light);
+    std::vector<Triangle> triangles = m_render.render(m_light);
 
-    for (const auto& polygon : polygons) {
-        if (glbl::render::textureVisible && polygon.t) {
+    for (const auto& triangle : triangles) {
+        if (glbl::render::textureVisible && triangle.t) {
             Triangle::texturedTriangle(
-                polygon.p[0].x, polygon.p[0].y, polygon.t[0].u, polygon.t[0].v, polygon.t[0].w,
-                polygon.p[1].x, polygon.p[1].y, polygon.t[1].u, polygon.t[1].v, polygon.t[1].w,
-                polygon.p[2].x, polygon.p[2].y, polygon.t[2].u, polygon.t[2].v, polygon.t[2].w,
+                triangle.p[0].x, triangle.p[0].y, triangle.t[0].u, triangle.t[0].v, triangle.t[0].w,
+                triangle.p[1].x, triangle.p[1].y, triangle.t[1].u, triangle.t[1].v, triangle.t[1].w,
+                triangle.p[2].x, triangle.p[2].y, triangle.t[2].u, triangle.t[2].v, triangle.t[2].w,
                 &m_image, m_window
             );
         } else {
-            sf::Color faceColor(polygon.col.r, polygon.col.g, polygon.col.b);
+            sf::Color faceColor(triangle.col.r, triangle.col.g, triangle.col.b);
 
             if (glbl::render::faceVisible) {
-                triangles.append(sf::Vertex{sf::Vector2f(polygon.p[0].x, polygon.p[0].y), faceColor});
-                triangles.append(sf::Vertex{sf::Vector2f(polygon.p[1].x, polygon.p[1].y), faceColor});
-                triangles.append(sf::Vertex{sf::Vector2f(polygon.p[2].x, polygon.p[2].y), faceColor});
+                drawingTriangles.append(sf::Vertex{sf::Vector2f(triangle.p[0].x, triangle.p[0].y), faceColor});
+                drawingTriangles.append(sf::Vertex{sf::Vector2f(triangle.p[1].x, triangle.p[1].y), faceColor});
+                drawingTriangles.append(sf::Vertex{sf::Vector2f(triangle.p[2].x, triangle.p[2].y), faceColor});
             }
         }
         if (glbl::render::edgeVisible) {
-            edges.append(sf::Vertex{sf::Vector2f(polygon.p[0].x, polygon.p[0].y), edgeColor});
-            edges.append(sf::Vertex{sf::Vector2f(polygon.p[1].x, polygon.p[1].y), edgeColor});
-            edges.append(sf::Vertex{sf::Vector2f(polygon.p[1].x, polygon.p[1].y), edgeColor});
-            edges.append(sf::Vertex{sf::Vector2f(polygon.p[2].x, polygon.p[2].y), edgeColor});
-            edges.append(sf::Vertex{sf::Vector2f(polygon.p[2].x, polygon.p[2].y), edgeColor});
-            edges.append(sf::Vertex{sf::Vector2f(polygon.p[0].x, polygon.p[0].y), edgeColor});
+            drawingEdges.append(sf::Vertex{sf::Vector2f(triangle.p[0].x, triangle.p[0].y), edgeColor});
+            drawingEdges.append(sf::Vertex{sf::Vector2f(triangle.p[1].x, triangle.p[1].y), edgeColor});
+            drawingEdges.append(sf::Vertex{sf::Vector2f(triangle.p[1].x, triangle.p[1].y), edgeColor});
+            drawingEdges.append(sf::Vertex{sf::Vector2f(triangle.p[2].x, triangle.p[2].y), edgeColor});
+            drawingEdges.append(sf::Vertex{sf::Vector2f(triangle.p[2].x, triangle.p[2].y), edgeColor});
+            drawingEdges.append(sf::Vertex{sf::Vector2f(triangle.p[0].x, triangle.p[0].y), edgeColor});
         }
     }
 
-    if (glbl::render::faceVisible && triangles.getVertexCount() > 0) {
-        m_window.draw(triangles);
+    if (glbl::render::faceVisible && drawingTriangles.getVertexCount() > 0) {
+        m_window.draw(drawingTriangles);
     }
 
-    if (glbl::render::edgeVisible && edges.getVertexCount() > 0) {
-        m_window.draw(edges);
+    if (glbl::render::edgeVisible && drawingEdges.getVertexCount() > 0) {
+        m_window.draw(drawingEdges);
     }
 
     m_window.display();

@@ -12,67 +12,67 @@ void Render::update() {
 }
 
 std::vector<Triangle> Render::render(Light light) {
-    std::vector<Triangle> projectedPolygons, renderedPolygons;
+    std::vector<Triangle> projectedTriangles, renderedTriangles;
 
     for (auto& mesh : m_renderMeshes) {
-        std::vector<Triangle> polygons = mesh->getTransformedTriangles();
+        std::vector<Triangle> triangles = mesh->getTransformedTriangles();
 
-        for (auto& polygon : polygons) {
-            if (glbl::render::backFaceVisible || polygon.getNormal().dotProd(polygon.p[0] - m_camera.getPos()) < 0) {
-                polygon.col.setBrightness(std::max(0.15f, polygon.getNormal().dotProd(light.getDir())));
+        for (auto& triangle : triangles) {
+            if (glbl::render::backFaceVisible || triangle.getNormal().dotProd(triangle.p[0] - m_camera.getPos()) < 0) {
+                triangle.col.setBrightness(std::max(0.15f, triangle.getNormal().dotProd(light.getDir())));
     
-                Triangle projectedPolygon = polygon;
-                projectedPolygon *= matView;
+                Triangle projectedTriangle = triangle;
+                projectedTriangle *= matView;
 
-                int clippedPolygons = 0;
+                int clippedTriangles = 0;
                 Triangle clipped[2];
-                clippedPolygons = Triangle::clipAgainsPlane({0, 0, 0.1}, {0, 0, 1}, projectedPolygon, clipped[0], clipped[1]);
-                for (int i = 0; i < clippedPolygons; i++) {
-                    projectedPolygon = clipped[i] * matProj;
+                clippedTriangles = Triangle::clipAgainsPlane({0, 0, 0.1}, {0, 0, 1}, projectedTriangle, clipped[0], clipped[1]);
+                for (int i = 0; i < clippedTriangles; i++) {
+                    projectedTriangle = clipped[i] * matProj;
 
-                    projectedPolygon.t[0].u = projectedPolygon.t[0].u / projectedPolygon.p[0].w;
-                    projectedPolygon.t[1].u = projectedPolygon.t[1].u / projectedPolygon.p[1].w;
-                    projectedPolygon.t[2].u = projectedPolygon.t[2].u / projectedPolygon.p[2].w;
-                    projectedPolygon.t[0].v = projectedPolygon.t[0].v / projectedPolygon.p[0].w;
-                    projectedPolygon.t[1].v = projectedPolygon.t[1].v / projectedPolygon.p[1].w;
-                    projectedPolygon.t[2].v = projectedPolygon.t[2].v / projectedPolygon.p[2].w;
-                    projectedPolygon.t[0].w = 1.f / projectedPolygon.p[0].w;
-                    projectedPolygon.t[1].w = 1.f / projectedPolygon.p[1].w;
-                    projectedPolygon.t[2].w = 1.f / projectedPolygon.p[2].w;
+                    projectedTriangle.t[0].u = projectedTriangle.t[0].u / projectedTriangle.p[0].w;
+                    projectedTriangle.t[1].u = projectedTriangle.t[1].u / projectedTriangle.p[1].w;
+                    projectedTriangle.t[2].u = projectedTriangle.t[2].u / projectedTriangle.p[2].w;
+                    projectedTriangle.t[0].v = projectedTriangle.t[0].v / projectedTriangle.p[0].w;
+                    projectedTriangle.t[1].v = projectedTriangle.t[1].v / projectedTriangle.p[1].w;
+                    projectedTriangle.t[2].v = projectedTriangle.t[2].v / projectedTriangle.p[2].w;
+                    projectedTriangle.t[0].w = 1.f / projectedTriangle.p[0].w;
+                    projectedTriangle.t[1].w = 1.f / projectedTriangle.p[1].w;
+                    projectedTriangle.t[2].w = 1.f / projectedTriangle.p[2].w;
                     
-                    projectedPolygon.projectionDiv();
+                    projectedTriangle.projectionDiv();
 
-                    projectedPolygon.scaleX(-1);
-                    projectedPolygon.scaleY(-1);
+                    projectedTriangle.scaleX(-1);
+                    projectedTriangle.scaleY(-1);
 
-                    projectedPolygon.translateX(1.f);
-                    projectedPolygon.translateY(1.f);
-                    projectedPolygon.scaleX(0.5f * glbl::window::width);
-                    projectedPolygon.scaleY(0.5f * glbl::window::height);
+                    projectedTriangle.translateX(1.f);
+                    projectedTriangle.translateY(1.f);
+                    projectedTriangle.scaleX(0.5f * glbl::window::width);
+                    projectedTriangle.scaleY(0.5f * glbl::window::height);
         
-                    projectedPolygons.emplace_back(projectedPolygon);
+                    projectedTriangles.emplace_back(projectedTriangle);
                 }
             }
         }
     }
 
-    std::sort(projectedPolygons.begin(), projectedPolygons.end(), [](const Triangle& t1, const Triangle& t2) {
+    std::sort(projectedTriangles.begin(), projectedTriangles.end(), [](const Triangle& t1, const Triangle& t2) {
         return (t1.p[0].z + t1.p[1].z + t1.p[2].z)/3 > (t2.p[0].z + t2.p[1].z + t2.p[2].z)/3;
     });
 
-    for (const auto& polygon : projectedPolygons) {
+    for (const auto& triangle : projectedTriangles) {
         Triangle clipped[2];
         std::deque<Triangle> triangles;
-        triangles.emplace_back(polygon);
-        int newPolygons = 1;
+        triangles.emplace_back(triangle);
+        int newTriangles = 1;
     
         for (int i = 0; i < 4; i++) {
             int poligonsToAdd = 0;
     
-            while (newPolygons > 0) {
+            while (newTriangles > 0) {
                 Triangle tri = triangles.front();
                 triangles.pop_front();
-                newPolygons--;
+                newTriangles--;
     
                 switch (i) {
                 case 0: poligonsToAdd = Triangle::clipAgainsPlane({0, 0, 0}, {0, 1, 0}, tri, clipped[0], clipped[1]); break;
@@ -86,11 +86,11 @@ std::vector<Triangle> Render::render(Light light) {
                 }
             }
     
-            newPolygons = triangles.size();
+            newTriangles = triangles.size();
         }
         
-        for (const auto& tri : triangles) { renderedPolygons.emplace_back(tri); }
+        for (const auto& tri : triangles) { renderedTriangles.emplace_back(tri); }
     }
 
-    return renderedPolygons;
+    return renderedTriangles;
 }

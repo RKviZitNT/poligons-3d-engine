@@ -27,7 +27,7 @@ public:
     std::vector<Triangle> getTransformedTriangles() const;
     
 private:
-    std::vector<Triangle> m_poligons;
+    std::vector<Triangle> m_triangles;
     std::vector<Vec3d> m_vertices;
 
     Vec3d m_position, m_scale, m_angle;
