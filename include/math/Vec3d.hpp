@@ -13,37 +13,37 @@ public:
     Vec3d(float xyz);
     Vec3d(float x_, float y_, float z_);
 
-    Vec3d operator+(const Vec3d& v) const;
-    Vec3d operator-(const Vec3d& v) const;
-    Vec3d operator*(const Vec3d& v) const;
-    Vec3d operator/(const Vec3d& v) const;
+    Vec3d operator+(const Vec3d& other) const;
+    Vec3d operator-(const Vec3d& other) const;
+    Vec3d operator*(const Vec3d& other) const;
+    Vec3d operator/(const Vec3d& other) const;
 
     Vec3d operator+(const float& f) const;
     Vec3d operator-(const float& f) const;
     Vec3d operator*(const float& f) const;
     Vec3d operator/(const float& f) const;
 
-    Vec3d& operator+=(const Vec3d& v);
-    Vec3d& operator-=(const Vec3d& v);
-    Vec3d& operator*=(const Vec3d& v);
-    Vec3d& operator/=(const Vec3d& v);
+    Vec3d& operator+=(const Vec3d& other);
+    Vec3d& operator-=(const Vec3d& other);
+    Vec3d& operator*=(const Vec3d& other);
+    Vec3d& operator/=(const Vec3d& other);
     
     Vec3d& operator+=(const float& f);
     Vec3d& operator-=(const float& f);
     Vec3d& operator*=(const float& f);
     Vec3d& operator/=(const float& f);
     
-    Vec3d crossProd(const Vec3d& v) const;
-    float dotProd(const Vec3d& v) const;
+    Vec3d operator*(const Mat4x4& mat);
+
+    Vec3d cross(const Vec3d& other) const;
+    float dot(const Vec3d& other) const;
     
     float length() const;
     Vec3d normalize() const;
 
     void projectionDiv();
 
-    friend Vec3d operator*(const Vec3d& v, const Mat4x4& m);
-
-    static Vec3d intersectPlane(const Vec3d& planePoint, const Vec3d& planeNormal, const Vec3d& lineStart, const Vec3d& lineEnd, float& t);
+    void intersectPlane(const Vec3d& planePoint, const Vec3d& planeNormal, const Vec3d& lineStart, const Vec3d& lineEnd, float& t);
 
 private:
 };

@@ -17,8 +17,8 @@ void Camera::translateBack(float offset) { pos -= dir * offset; }
 void Camera::translateForwardNoY(float offset) {pos += Vec3d(dir.x, 0, dir.z).normalize() * offset; }
 void Camera::translateBackNoY(float offset) { pos -= Vec3d(dir.x, 0, dir.z).normalize() * offset; }
 
-void Camera::translateLeft(float offset) { pos -= dir.crossProd({0, 1, 0}).normalize() * offset; }
-void Camera::translateRight(float offset) { pos += dir.crossProd({0, 1, 0}).normalize() * offset; }
+void Camera::translateLeft(float offset) { pos -= dir.cross({0, 1, 0}).normalize() * offset; }
+void Camera::translateRight(float offset) { pos += dir.cross({0, 1, 0}).normalize() * offset; }
 
 void Camera::translateUp(float offset) { translateY(offset); }
 void Camera::translateDown(float offset) { translateY(-offset); }

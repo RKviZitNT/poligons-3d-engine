@@ -18,8 +18,8 @@ std::vector<Triangle> Render::render(Light light) {
         std::vector<Triangle> triangles = mesh->getTransformedTriangles();
 
         for (auto& triangle : triangles) {
-            if (glbl::render::backFaceVisible || triangle.getNormal().dotProd(triangle.p[0] - m_camera.getPos()) < 0) {
-                triangle.col.setBrightness(std::max(0.15f, triangle.getNormal().dotProd(light.getDir())));
+            if (glbl::render::backFaceVisible || triangle.getNormal().dot(triangle.p[0] - m_camera.getPos()) < 0) {
+                triangle.col.setBrightness(std::max(0.15f, triangle.getNormal().dot(light.getDir())));
     
                 Triangle projectedTriangle = triangle;
                 projectedTriangle *= matView;
@@ -28,17 +28,7 @@ std::vector<Triangle> Render::render(Light light) {
                 Triangle clipped[2];
                 clippedTriangles = Triangle::clipAgainsPlane({0, 0, 0.1}, {0, 0, 1}, projectedTriangle, clipped[0], clipped[1]);
                 for (int i = 0; i < clippedTriangles; i++) {
-                    projectedTriangle = clipped[i] * matProj;
-
-                    projectedTriangle.t[0].u = projectedTriangle.t[0].u / projectedTriangle.p[0].w;
-                    projectedTriangle.t[1].u = projectedTriangle.t[1].u / projectedTriangle.p[1].w;
-                    projectedTriangle.t[2].u = projectedTriangle.t[2].u / projectedTriangle.p[2].w;
-                    projectedTriangle.t[0].v = projectedTriangle.t[0].v / projectedTriangle.p[0].w;
-                    projectedTriangle.t[1].v = projectedTriangle.t[1].v / projectedTriangle.p[1].w;
-                    projectedTriangle.t[2].v = projectedTriangle.t[2].v / projectedTriangle.p[2].w;
-                    projectedTriangle.t[0].w = 1.f / projectedTriangle.p[0].w;
-                    projectedTriangle.t[1].w = 1.f / projectedTriangle.p[1].w;
-                    projectedTriangle.t[2].w = 1.f / projectedTriangle.p[2].w;
+                    projectedTriangle = clipped[i] * matProj;;
                     
                     projectedTriangle.projectionDiv();
 

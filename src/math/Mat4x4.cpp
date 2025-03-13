@@ -13,13 +13,13 @@ Mat4x4::Mat4x4(std::initializer_list<std::initializer_list<float>> values) {
     }
 }
 
-Mat4x4 Mat4x4::operator*(const Mat4x4& m) const {
+Mat4x4 Mat4x4::operator*(const Mat4x4& mat) const {
     Mat4x4 result;
     for (int i = 0; i < 4; ++i) {
         for (int j = 0; j < 4; ++j) {
             result.m[i][j] = 0;
             for (int k = 0; k < 4; ++k) {
-                result.m[i][j] += this->m[i][k] * m.m[k][j];
+                result.m[i][j] += this->m[i][k] * mat.m[k][j];
             }
         }
     }
@@ -89,8 +89,8 @@ Mat4x4 Mat4x4::projection(float fNear, float fFar, float fFov, float fAspectRati
 
 Mat4x4 Mat4x4::pointAt(const Vec3d& pos, const Vec3d& target, const Vec3d& up) {
     Vec3d newForward = (target - pos).normalize();
-    Vec3d newUp = (up - newForward * up.dotProd(newForward)).normalize();
-    Vec3d newRigh = newUp.crossProd(newForward);
+    Vec3d newUp = (up - newForward * up.dot(newForward)).normalize();
+    Vec3d newRigh = newUp.cross(newForward);
 
     return Mat4x4{
         { newRigh.x,     newRigh.y,     newRigh.z,     0 },
@@ -100,15 +100,15 @@ Mat4x4 Mat4x4::pointAt(const Vec3d& pos, const Vec3d& target, const Vec3d& up) {
     };
 }
 
-Mat4x4 Mat4x4::inverse(const Mat4x4& m) {
+Mat4x4 Mat4x4::inverse(const Mat4x4& mat) {
     Mat4x4 matrix{
-        { m.m[0][0],  m.m[1][0],  m.m[2][0],  0 },
-        { m.m[0][1],  m.m[1][1],  m.m[2][1],  0 },
-        { m.m[0][2],  m.m[1][2],  m.m[2][2],  0 },
-        { 0,          0,          0,          1 }
+        { mat.m[0][0],  mat.m[1][0],  mat.m[2][0],  0 },
+        { mat.m[0][1],  mat.m[1][1],  mat.m[2][1],  0 },
+        { mat.m[0][2],  mat.m[1][2],  mat.m[2][2],  0 },
+        { 0,            0,            0,            1 }
     };
-    matrix.m[3][0] = -(m.m[3][0] * matrix.m[0][0] + m.m[3][1] * matrix.m[1][0] + m.m[3][2] * matrix.m[2][0]);
-	matrix.m[3][1] = -(m.m[3][0] * matrix.m[0][1] + m.m[3][1] * matrix.m[1][1] + m.m[3][2] * matrix.m[2][1]);
-	matrix.m[3][2] = -(m.m[3][0] * matrix.m[0][2] + m.m[3][1] * matrix.m[1][2] + m.m[3][2] * matrix.m[2][2]);
+    matrix.m[3][0] = -(mat.m[3][0] * matrix.m[0][0] + mat.m[3][1] * matrix.m[1][0] + mat.m[3][2] * matrix.m[2][0]);
+	matrix.m[3][1] = -(mat.m[3][0] * matrix.m[0][1] + mat.m[3][1] * matrix.m[1][1] + mat.m[3][2] * matrix.m[2][1]);
+	matrix.m[3][2] = -(mat.m[3][0] * matrix.m[0][2] + mat.m[3][1] * matrix.m[1][2] + mat.m[3][2] * matrix.m[2][2]);
     return matrix;
 }

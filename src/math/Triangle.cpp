@@ -12,41 +12,40 @@ void Triangle::scaleX(float f) { for (auto& v : p) { v.x *= f; } }
 void Triangle::scaleY(float f) { for (auto& v : p) { v.y *= f; } }
 void Triangle::scaleZ(float f) { for (auto& v : p) { v.z *= f; } }
 
-void Triangle::copyPoints(const Triangle& other) { for (int i = 0; i < 3; i++) { p[i] = other.p[i]; } }
-void Triangle::copyTex(const Triangle& other) { for (int i = 0; i < 3; i++) { t[i] = other.t[i]; } }
-
 Vec3d Triangle::getNormal() const {
     Vec3d ab = p[1] - p[0];
     Vec3d ac = p[2] - p[0];
-    return ab.crossProd(ac).normalize();
+    return ab.cross(ac).normalize();
 }
 
 void Triangle::projectionDiv() {
-    p[0].projectionDiv();
-    p[1].projectionDiv();
-    p[2].projectionDiv();
+    for (int i = 0; i < 3; i++) {
+        p[i].projectionDiv();
+        t[i].projectionDiv(p[i].w);
+        t[i].setW(1.f / p[i].w);
+    }
 }
 
-Triangle& Triangle::operator*=(const Mat4x4& m) {
-    p[0] = p[0] * m;
-    p[1] = p[1] * m;
-    p[2] = p[2] * m;
-    return *this;
-}
-
-Triangle operator*(const Triangle& t, const Mat4x4& m) {
-    Triangle result = t;
-    result.p[0] = t.p[0] * m;
-    result.p[1] = t.p[1] * m;
-    result.p[2] = t.p[2] * m;
+Triangle Triangle::operator*(const Mat4x4& mat) {
+    Triangle result = *this;
+    for (int i = 0; i < 3; i++) {
+        result.p[i] = p[i] * mat;
+    }
     return result;
+}
+
+Triangle& Triangle::operator*=(const Mat4x4& mat) {
+    for (int i = 0; i < 3; i++) {
+        p[i] = p[i] * mat;
+    }
+    return *this;
 }
 
 int Triangle::clipAgainsPlane(const Vec3d& planePoint, const Vec3d& planeNormal, const Triangle& inTri, Triangle& outTri1, Triangle& outTri2) {
     Vec3d normalizedPlaneNormal = planeNormal.normalize();
 
     auto dist = [&](const Vec3d& point) {
-        return normalizedPlaneNormal.dotProd(point) - normalizedPlaneNormal.dotProd(planePoint);
+        return normalizedPlaneNormal.dot(point) - normalizedPlaneNormal.dot(planePoint);
     };
 
     const Vec3d* insidePoints[3];  
@@ -85,15 +84,11 @@ int Triangle::clipAgainsPlane(const Vec3d& planePoint, const Vec3d& planeNormal,
         outTri1.p[0] = *insidePoints[0];
         outTri1.t[0] = *insideTex[0];
 
-        outTri1.p[1] = Vec3d::intersectPlane(planePoint, normalizedPlaneNormal, *insidePoints[0], *outsidePoints[0], t);
-        outTri1.t[1].u = insideTex[0]->u + t * (outsideTex[0]->u - insideTex[0]->u);
-        outTri1.t[1].v = insideTex[0]->v + t * (outsideTex[0]->v - insideTex[0]->v);
-        outTri1.t[1].w = insideTex[0]->w + t * (outsideTex[0]->w - insideTex[0]->w);
+        outTri1.p[1].intersectPlane(planePoint, normalizedPlaneNormal, *insidePoints[0], *outsidePoints[0], t);
+        outTri1.t[1].intersectPlane(*insideTex[0], *outsideTex[0], t);
 
-        outTri1.p[2] = Vec3d::intersectPlane(planePoint, normalizedPlaneNormal, *insidePoints[0], *outsidePoints[1], t);
-        outTri1.t[2].u = insideTex[0]->u + t * (outsideTex[1]->u - insideTex[0]->u);
-        outTri1.t[2].v = insideTex[0]->v + t * (outsideTex[1]->v - insideTex[0]->v);
-        outTri1.t[2].w = insideTex[0]->w + t * (outsideTex[1]->w - insideTex[0]->w);
+        outTri1.p[2].intersectPlane(planePoint, normalizedPlaneNormal, *insidePoints[0], *outsidePoints[1], t);
+        outTri1.t[2].intersectPlane(*insideTex[0], *outsideTex[1], t);
 
         return 1;
     }
@@ -109,10 +104,8 @@ int Triangle::clipAgainsPlane(const Vec3d& planePoint, const Vec3d& planeNormal,
         outTri1.p[1] = *insidePoints[1];
         outTri1.t[1] = *insideTex[1];
 
-        outTri1.p[2] = Vec3d::intersectPlane(planePoint, normalizedPlaneNormal, *insidePoints[0], *outsidePoints[0], t);
-        outTri1.t[2].u = insideTex[0]->u + t * (outsideTex[0]->u - insideTex[0]->u);
-        outTri1.t[2].v = insideTex[0]->v + t * (outsideTex[0]->v - insideTex[0]->v);
-        outTri1.t[2].w = insideTex[0]->w + t * (outsideTex[0]->w - insideTex[0]->w);
+        outTri1.p[2].intersectPlane(planePoint, normalizedPlaneNormal, *insidePoints[0], *outsidePoints[0], t);
+        outTri1.t[2].intersectPlane(*insideTex[0], *outsideTex[0], t);
 
         outTri2 = inTri;
 
@@ -122,10 +115,8 @@ int Triangle::clipAgainsPlane(const Vec3d& planePoint, const Vec3d& planeNormal,
         outTri2.p[1] = outTri1.p[2];
         outTri2.t[1] = outTri1.t[2];
 
-        outTri2.p[2] = Vec3d::intersectPlane(planePoint, normalizedPlaneNormal, *insidePoints[1], *outsidePoints[0], t);
-        outTri2.t[2].u = insideTex[1]->u + t * (outsideTex[0]->u - insideTex[1]->u);
-        outTri2.t[2].v = insideTex[1]->v + t * (outsideTex[0]->v - insideTex[1]->v);
-        outTri2.t[2].w = insideTex[1]->w + t * (outsideTex[0]->w - insideTex[1]->w);
+        outTri2.p[2].intersectPlane(planePoint, normalizedPlaneNormal, *insidePoints[1], *outsidePoints[0], t);
+        outTri2.t[2].intersectPlane(*insideTex[1], *outsideTex[0], t);
 
         return 2;
     }

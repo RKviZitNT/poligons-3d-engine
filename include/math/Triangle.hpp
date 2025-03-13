@@ -26,16 +26,13 @@ public:
     void scaleY(float f);
     void scaleZ(float f);
 
-    void copyPoints(const Triangle& t);
-    void copyTex(const Triangle& t);
-
     Vec3d getNormal() const;
 
     void projectionDiv();
 
-    Triangle& operator*=(const Mat4x4& m);
+    Triangle operator*(const Mat4x4& mat);
 
-    friend Triangle operator*(const Triangle& t, const Mat4x4& m);
+    Triangle& operator*=(const Mat4x4& mat);
 
     static int clipAgainsPlane(const Vec3d& planePoint, const Vec3d& planeNormal, const Triangle& inTri, Triangle& outTri1, Triangle& outTri2);
     static void texturedTriangle(int x1, int y1, float u1, float v1, float w1,
