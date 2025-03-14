@@ -4,8 +4,8 @@ Engine::Engine() :
     m_window(sf::VideoMode({glbl::window::width, glbl::window::height}), "3d render", sf::Style::Titlebar | sf::Style::Close),
     m_isPaused(false),
     m_isMouseLocked(true),
-    m_render(m_camera)
-    // m_cube("resources/models/mountains.obj")
+    m_render(m_camera),
+    m_cube("resources/models/mountains.obj")
 {
     m_window.setMouseCursorVisible(!m_isMouseLocked);
     windowCenter = sf::Vector2i(m_window.getSize().x / 2, m_window.getSize().y / 2);
@@ -100,7 +100,7 @@ void Engine::handleEvents() {
 void Engine::update() {
     m_render.update();
 
-    m_cube.rotate({1 * deltaTime.asSeconds(), 1 * deltaTime.asSeconds(), 0});
+    // m_cube.rotate({1 * deltaTime.asSeconds(), 1 * deltaTime.asSeconds(), 0});
 }
 
 void Engine::draw() {
@@ -113,7 +113,7 @@ void Engine::draw() {
     std::vector<Triangle> triangles = m_render.render(m_light);
 
     for (const auto& triangle : triangles) {
-        if (glbl::render::textureVisible && triangle.t) {
+        if (glbl::render::textureVisible && triangle.isTextured) {
             Triangle::texturedTriangle(
                 triangle.p[0].x, triangle.p[0].y, triangle.t[0].u, triangle.t[0].v, triangle.t[0].w,
                 triangle.p[1].x, triangle.p[1].y, triangle.t[1].u, triangle.t[1].v, triangle.t[1].w,

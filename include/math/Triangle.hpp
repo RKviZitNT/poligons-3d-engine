@@ -14,6 +14,8 @@ public:
     Vec2d t[3];
     Color col;
 
+    bool isTextured = true;
+
     Triangle();
     Triangle(Vec3d p1, Vec3d p2, Vec3d p3, Color color = Color());
     Triangle(Vec3d p1, Vec3d p2, Vec3d p3, Vec2d t1, Vec2d t2, Vec2d t3);

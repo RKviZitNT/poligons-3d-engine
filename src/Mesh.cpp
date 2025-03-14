@@ -2,6 +2,9 @@
 
 Mesh::Mesh(const std::string& modelFilename) {
     loadModel(modelFilename);
+    for (auto& t : m_triangles) {
+        t.isTextured = false;
+    }
 
     m_position = Vec3d(0);
     m_scale = Vec3d(1);
