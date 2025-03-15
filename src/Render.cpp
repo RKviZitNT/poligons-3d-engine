@@ -46,9 +46,9 @@ std::vector<Triangle> Render::render(Light light) {
         }
     }
 
-    std::sort(projectedTriangles.begin(), projectedTriangles.end(), [](const Triangle& t1, const Triangle& t2) {
-        return (t1.p[0].z + t1.p[1].z + t1.p[2].z)/3 > (t2.p[0].z + t2.p[1].z + t2.p[2].z)/3;
-    });
+    // std::sort(projectedTriangles.begin(), projectedTriangles.end(), [](const Triangle& t1, const Triangle& t2) {
+    //     return (t1.p[0].z + t1.p[1].z + t1.p[2].z)/3 > (t2.p[0].z + t2.p[1].z + t2.p[2].z)/3;
+    // });
 
     for (const auto& triangle : projectedTriangles) {
         Triangle clipped[2];

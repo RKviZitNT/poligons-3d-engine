@@ -8,6 +8,7 @@
 #include "Mesh.hpp"
 #include "Light.hpp"
 #include "Render.hpp"
+#include "DepthBuffer.hpp"
 #include "math/Mat4x4.hpp"
 #include "math/Triangle.hpp"
 #include "math/Vec3d.hpp"
@@ -33,6 +34,7 @@ private:
     bool m_isMouseLocked;
     bool m_isPaused;
 
+    DepthBuffer m_depthBuffer;
     Render m_render;
     Camera m_camera;
     Light m_light;

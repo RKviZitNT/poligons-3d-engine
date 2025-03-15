@@ -6,7 +6,9 @@
 #include "Vec2d.hpp"
 #include "Vec3d.hpp"
 #include "Mat4x4.hpp"
+#include "Config.hpp"
 #include "Color.hpp"
+#include "DepthBuffer.hpp"
 
 class Triangle {
 public:
@@ -14,7 +16,7 @@ public:
     Vec2d t[3];
     Color col;
 
-    bool isTextured = true;
+    bool isTextured = false;
 
     Triangle();
     Triangle(Vec3d p1, Vec3d p2, Vec3d p3, Color color = Color());
@@ -35,10 +37,8 @@ public:
     Triangle operator*(const Mat4x4& mat);
 
     Triangle& operator*=(const Mat4x4& mat);
+    
+    void texturedTriangle(DepthBuffer& depthBuffer, sf::Image *image, sf::RenderWindow& window);
 
     static int clipAgainsPlane(const Vec3d& planePoint, const Vec3d& planeNormal, const Triangle& inTri, Triangle& outTri1, Triangle& outTri2);
-    static void texturedTriangle(int x1, int y1, float u1, float v1, float w1,
-                                 int x2, int y2, float u2, float v2, float w2,
-                                 int x3, int y3, float u3, float v3, float w3,
-                                 sf::Image *image, sf::RenderWindow& window);
 };

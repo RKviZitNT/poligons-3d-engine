@@ -15,6 +15,7 @@ set(HEADER_FILES
     include/Color.hpp
     include/Light.hpp
     include/Render.hpp
+    include/DepthBuffer.hpp
     include/math/Vec2d.hpp
     include/math/Vec3d.hpp
     include/math/Triangle.hpp
@@ -28,7 +29,8 @@ set(SOURCE_FILES
     src/Camera.cpp
     src/Color.cpp
     src/Light.cpp
-    src//Render.cpp
+    src/Render.cpp
+    src/DepthBuffer.cpp
     src/math/Vec2d.cpp
     src/math/Vec3d.cpp
     src/math/Triangle.cpp

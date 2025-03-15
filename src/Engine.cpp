@@ -5,6 +5,7 @@ Engine::Engine() :
     m_isPaused(false),
     m_isMouseLocked(true),
     m_render(m_camera),
+    m_depthBuffer(glbl::window::width, glbl::window::height),
     m_cube("resources/models/mountains.obj")
 {
     m_window.setMouseCursorVisible(!m_isMouseLocked);
@@ -105,6 +106,7 @@ void Engine::update() {
 
 void Engine::draw() {
     m_window.clear(sf::Color::Black);
+    m_depthBuffer.clear(0.f);
 
     sf::VertexArray drawingTriangles(sf::PrimitiveType::Triangles);
     sf::VertexArray drawingEdges(sf::PrimitiveType::Lines);
@@ -112,31 +114,27 @@ void Engine::draw() {
 
     std::vector<Triangle> triangles = m_render.render(m_light);
 
-    for (const auto& triangle : triangles) {
-        if (glbl::render::textureVisible && triangle.isTextured) {
-            Triangle::texturedTriangle(
-                triangle.p[0].x, triangle.p[0].y, triangle.t[0].u, triangle.t[0].v, triangle.t[0].w,
-                triangle.p[1].x, triangle.p[1].y, triangle.t[1].u, triangle.t[1].v, triangle.t[1].w,
-                triangle.p[2].x, triangle.p[2].y, triangle.t[2].u, triangle.t[2].v, triangle.t[2].w,
-                &m_image, m_window
-            );
-        } else {
-            sf::Color faceColor(triangle.col.r, triangle.col.g, triangle.col.b);
+    for (auto& triangle : triangles) {
+        if (glbl::render::textureVisible) {
+            triangle.texturedTriangle(m_depthBuffer, &m_image, m_window);
+        }
+        // else {
+        //     sf::Color faceColor(triangle.col.r, triangle.col.g, triangle.col.b);
 
-            if (glbl::render::faceVisible) {
-                drawingTriangles.append(sf::Vertex{sf::Vector2f(triangle.p[0].x, triangle.p[0].y), faceColor});
-                drawingTriangles.append(sf::Vertex{sf::Vector2f(triangle.p[1].x, triangle.p[1].y), faceColor});
-                drawingTriangles.append(sf::Vertex{sf::Vector2f(triangle.p[2].x, triangle.p[2].y), faceColor});
-            }
-        }
-        if (glbl::render::edgeVisible) {
-            drawingEdges.append(sf::Vertex{sf::Vector2f(triangle.p[0].x, triangle.p[0].y), edgeColor});
-            drawingEdges.append(sf::Vertex{sf::Vector2f(triangle.p[1].x, triangle.p[1].y), edgeColor});
-            drawingEdges.append(sf::Vertex{sf::Vector2f(triangle.p[1].x, triangle.p[1].y), edgeColor});
-            drawingEdges.append(sf::Vertex{sf::Vector2f(triangle.p[2].x, triangle.p[2].y), edgeColor});
-            drawingEdges.append(sf::Vertex{sf::Vector2f(triangle.p[2].x, triangle.p[2].y), edgeColor});
-            drawingEdges.append(sf::Vertex{sf::Vector2f(triangle.p[0].x, triangle.p[0].y), edgeColor});
-        }
+        //     if (glbl::render::faceVisible) {
+        //         drawingTriangles.append(sf::Vertex{sf::Vector2f(triangle.p[0].x, triangle.p[0].y), faceColor});
+        //         drawingTriangles.append(sf::Vertex{sf::Vector2f(triangle.p[1].x, triangle.p[1].y), faceColor});
+        //         drawingTriangles.append(sf::Vertex{sf::Vector2f(triangle.p[2].x, triangle.p[2].y), faceColor});
+        //     }
+        // }
+        // if (glbl::render::edgeVisible) {
+        //     drawingEdges.append(sf::Vertex{sf::Vector2f(triangle.p[0].x, triangle.p[0].y), edgeColor});
+        //     drawingEdges.append(sf::Vertex{sf::Vector2f(triangle.p[1].x, triangle.p[1].y), edgeColor});
+        //     drawingEdges.append(sf::Vertex{sf::Vector2f(triangle.p[1].x, triangle.p[1].y), edgeColor});
+        //     drawingEdges.append(sf::Vertex{sf::Vector2f(triangle.p[2].x, triangle.p[2].y), edgeColor});
+        //     drawingEdges.append(sf::Vertex{sf::Vector2f(triangle.p[2].x, triangle.p[2].y), edgeColor});
+        //     drawingEdges.append(sf::Vertex{sf::Vector2f(triangle.p[0].x, triangle.p[0].y), edgeColor});
+        // }
     }
 
     if (glbl::render::faceVisible && drawingTriangles.getVertexCount() > 0) {

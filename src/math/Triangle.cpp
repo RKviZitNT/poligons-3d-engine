@@ -41,6 +41,156 @@ Triangle& Triangle::operator*=(const Mat4x4& mat) {
     return *this;
 }
 
+void Triangle::texturedTriangle(DepthBuffer& depthBuffer, sf::Image *image, sf::RenderWindow& window)
+{
+    int   y1 = p[0].y, y2 = p[1].y, y3 = p[2].y;
+    int   x1 = p[0].x, x2 = p[1].x, x3 = p[2].x;
+    float u1 = t[0].u, u2 = t[1].u, u3 = t[2].u;
+    float v1 = t[0].v, v2 = t[1].v, v3 = t[2].v;
+    float w1 = t[0].w, w2 = t[1].w, w3 = t[2].w;
+
+    if (y2 < y1) { std::swap(y1, y2); std::swap(x1, x2); std::swap(u1, u2); std::swap(v1, v2); std::swap(w1, w2); }
+    if (y3 < y1) { std::swap(y1, y3); std::swap(x1, x3); std::swap(u1, u3); std::swap(v1, v3); std::swap(w1, w3); }
+    if (y3 < y2) { std::swap(y2, y3); std::swap(x2, x3); std::swap(u2, u3); std::swap(v2, v3); std::swap(w2, w3); }
+
+    int   dy1 = y2 - y1;
+    int   dx1 = x2 - x1;
+    float du1 = u2 - u1;
+    float dv1 = v2 - v1;
+    float dw1 = w2 - w1;
+
+    int   dy2 = y3 - y1;
+    int   dx2 = x3 - x1;
+    float du2 = u3 - u1;
+    float dv2 = v3 - v1;
+    float dw2 = w3 - w1;
+
+    float texU, texV, texW;
+
+    float daxStep = 0, dbxStep = 0;
+    float du1Step = 0, dv1Step = 0;
+    float du2Step = 0, dv2Step = 0;
+    float dw1Step = 0, dw2Step = 0;
+
+    if (dy1) daxStep = dx1 / (float)std::abs(dy1);
+    if (dy2) dbxStep = dx2 / (float)std::abs(dy2);
+
+    if (dy1) du1Step = du1 / (float)std::abs(dy1);
+    if (dy1) dv1Step = dv1 / (float)std::abs(dy1);
+    if (dy1) dw1Step = dw1 / (float)std::abs(dy1);
+
+    if (dy2) du2Step = du2 / (float)std::abs(dy2);
+    if (dy2) dv2Step = dv2 / (float)std::abs(dy2);
+    if (dy2) dw2Step = dw2 / (float)std::abs(dy2);
+
+    sf::VertexArray pixels(sf::PrimitiveType::Points);
+
+    unsigned int texWidth = image->getSize().x;
+    unsigned int texHeight = image->getSize().y;
+
+    if (dy1) {
+        for (int i = y1; i <= y2; i++) {
+            int ax = x1 + (float)(i - y1) * daxStep;
+            int bx = x1 + (float)(i - y1) * dbxStep;
+
+            float texSu = u1 + (float)(i - y1) * du1Step;
+            float texSv = v1 + (float)(i - y1) * dv1Step;
+            float texSw = w1 + (float)(i - y1) * dw1Step;
+
+            float texEu = u1 + (float)(i - y1) * du2Step;
+            float texEv = v1 + (float)(i - y1) * dv2Step;
+            float texEw = w1 + (float)(i - y1) * dw2Step;
+
+            if (ax > bx) { std::swap(ax, bx); std::swap(texSu, texEu); std::swap(texSv, texEv); std::swap(texSw, texEw); }
+
+            texU = texSu;
+            texV = texSv;
+            texW = texSw;
+
+            float tstep = 1.f / ((float)(bx - ax));
+            float t = 0.f;
+
+            for (int j = ax; j < bx; j++) {
+                texU = (1.f - t) * texSu + t * texEu;
+                texV = (1.f - t) * texSv + t * texEv;
+                texW = (1.f - t) * texSw + t * texEw;
+
+                float wInv = 1.0f / texW;
+                unsigned int u = static_cast<unsigned int>(std::clamp(texU * wInv * texWidth, 0.0f, static_cast<float>(texWidth-1)));
+                unsigned int v = static_cast<unsigned int>(std::clamp(texV * wInv * texHeight, 0.0f, static_cast<float>(texHeight-1)));
+
+                if (texW > depthBuffer(i * glbl::window::width + j)) {
+                    if (isTextured) pixels.append(sf::Vertex{sf::Vector2f(j, i), image->getPixel({u, v})});
+                    else pixels.append(sf::Vertex{sf::Vector2f(j, i), sf::Color(col.r, col.g, col.b)});
+
+                    depthBuffer(i * glbl::window::width + j) = texW;
+                }
+
+                t += tstep;
+            }
+        }
+    }
+
+    dy1 = y3 - y2;
+    dx1 = x3 - x2;
+    du1 = u3 - u2;
+    dv1 = v3 - v2;
+    dw1 = w3 - w2;
+
+    if (dy1) daxStep = dx1 / (float)std::abs(dy1);
+    if (dy2) dbxStep = dx2 / (float)std::abs(dy2);
+
+    du1Step = 0; dv1Step = 0;
+    if (dy1) du1Step = du1 / (float)std::abs(dy1);
+    if (dy1) dv1Step = dv1 / (float)std::abs(dy1);
+    if (dy1) dw1Step = dw1 / (float)std::abs(dy1);
+
+    if (dy1) {
+        for (int i = y2; i <= y3; i++) {
+            int ax = x2 + (float)(i - y2) * daxStep;
+            int bx = x1 + (float)(i - y1) * dbxStep;
+
+            float texSu = u2 + (float)(i - y2) * du1Step;
+            float texSv = v2 + (float)(i - y2) * dv1Step;
+            float texSw = w2 + (float)(i - y2) * dw1Step;
+
+            float texEu = u1 + (float)(i - y1) * du2Step;
+            float texEv = v1 + (float)(i - y1) * dv2Step;
+            float texEw = w1 + (float)(i - y1) * dw2Step;
+
+            if (ax > bx) { std::swap(ax, bx); std::swap(texSu, texEu); std::swap(texSv, texEv); std::swap(texSw, texEw); }
+
+            texU = texSu;
+            texV = texSv;
+            texW = texSw;
+
+            float tstep = 1.f / ((float)(bx - ax));
+            float t = 0.f;
+
+            for (int j = ax; j < bx; j++) {
+                texU = (1.f - t) * texSu + t * texEu;
+                texV = (1.f - t) * texSv + t * texEv;
+                texW = (1.f - t) * texSw + t * texEw;
+                
+                float wInv = 1.0f / texW;
+                unsigned int u = static_cast<unsigned int>(std::clamp(texU * wInv * texWidth, 0.0f, static_cast<float>(texWidth-1)));
+                unsigned int v = static_cast<unsigned int>(std::clamp(texV * wInv * texHeight, 0.0f, static_cast<float>(texHeight-1)));
+
+                if (texW > depthBuffer(i * glbl::window::width + j)) {
+                    if (isTextured) pixels.append(sf::Vertex{sf::Vector2f(j, i), image->getPixel({u, v})});
+                    else pixels.append(sf::Vertex{sf::Vector2f(j, i), sf::Color(col.r, col.g, col.b)});
+
+                    depthBuffer(i * glbl::window::width + j) = texW;
+                }
+                
+                t += tstep;
+            }
+        }
+    }
+
+    window.draw(pixels);
+}
+
 int Triangle::clipAgainsPlane(const Vec3d& planePoint, const Vec3d& planeNormal, const Triangle& inTri, Triangle& outTri1, Triangle& outTri2) {
     Vec3d normalizedPlaneNormal = planeNormal.normalize();
 
@@ -122,141 +272,4 @@ int Triangle::clipAgainsPlane(const Vec3d& planePoint, const Vec3d& planeNormal,
     }
 
     return true;
-}
-
-void Triangle::texturedTriangle(int x1, int y1, float u1, float v1, float w1,
-    int x2, int y2, float u2, float v2, float w2,
-    int x3, int y3, float u3, float v3, float w3,
-    sf::Image *image, sf::RenderWindow& window)
-{
-    if (y2 < y1) { std::swap(y1, y2); std::swap(x1, x2); std::swap(u1, u2); std::swap(v1, v2); std::swap(w1, w2); }
-    if (y3 < y1) { std::swap(y1, y3); std::swap(x1, x3); std::swap(u1, u3); std::swap(v1, v3); std::swap(w1, w3); }
-    if (y3 < y2) { std::swap(y2, y3); std::swap(x2, x3); std::swap(u2, u3); std::swap(v2, v3); std::swap(w2, w3); }
-
-    int dy1 = y2 - y1;
-    int dx1 = x2 - x1;
-    float du1 = u2 - u1;
-    float dv1 = v2 - v1;
-    float dw1 = w2 - w1;
-
-    int dy2 = y3 - y1;
-    int dx2 = x3 - x1;
-    float du2 = u3 - u1;
-    float dv2 = v3 - v1;
-    float dw2 = w3 - w1;
-
-    float texU, texV, texW;
-
-    float daxStep = 0, dbxStep = 0;
-    float du1Step = 0, dv1Step = 0;
-    float du2Step = 0, dv2Step = 0;
-    float dw1Step = 0, dw2Step = 0;
-
-    if (dy1) daxStep = dx1 / (float)std::abs(dy1);
-    if (dy2) dbxStep = dx2 / (float)std::abs(dy2);
-
-    if (dy1) du1Step = du1 / (float)std::abs(dy1);
-    if (dy1) dv1Step = dv1 / (float)std::abs(dy1);
-    if (dy1) dw1Step = dw1 / (float)std::abs(dy1);
-
-    if (dy2) du2Step = du2 / (float)std::abs(dy2);
-    if (dy2) dv2Step = dv2 / (float)std::abs(dy2);
-    if (dy2) dw2Step = dw2 / (float)std::abs(dy2);
-
-    sf::VertexArray pixels(sf::PrimitiveType::Points);
-
-    unsigned int texWidth = image->getSize().x;
-    unsigned int texHeight = image->getSize().y;
-
-    if (dy1) {
-        for (int i = y1; i <= y2; i++) {
-            int ax = x1 + (float)(i - y1) * daxStep;
-            int bx = x1 + (float)(i - y1) * dbxStep;
-
-            float texSu = u1 + (float)(i - y1) * du1Step;
-            float texSv = v1 + (float)(i - y1) * dv1Step;
-            float texSw = w1 + (float)(i - y1) * dw1Step;
-
-            float texEu = u1 + (float)(i - y1) * du2Step;
-            float texEv = v1 + (float)(i - y1) * dv2Step;
-            float texEw = w1 + (float)(i - y1) * dw2Step;
-
-            if (ax > bx) { std::swap(ax, bx); std::swap(texSu, texEu); std::swap(texSv, texEv); std::swap(texSw, texEw); }
-
-            texU = texSu;
-            texV = texSv;
-            texW = texSw;
-
-            float tstep = 1.f / ((float)(bx - ax));
-            float t = 0.f;
-
-            for (int j = ax; j < bx; j++) {
-                texU = (1.f - t) * texSu + t * texEu;
-                texV = (1.f - t) * texSv + t * texEv;
-                texW = (1.f - t) * texSw + t * texEw;
-
-                float wInv = 1.0f / texW;
-                unsigned int u = static_cast<unsigned int>(texU * wInv * texWidth) % texWidth;
-                unsigned int v = static_cast<unsigned int>(texV * wInv * texHeight) % texHeight;
-
-                pixels.append(sf::Vertex{sf::Vector2f(j, i), image->getPixel({u, v})});
-
-                t += tstep;
-            }
-        }
-    }
-
-    dy1 = y3 - y2;
-    dx1 = x3 - x2;
-    du1 = u3 - u2;
-    dv1 = v3 - v2;
-    dw1 = w3 - w2;
-
-    if (dy1) daxStep = dx1 / (float)std::abs(dy1);
-    if (dy2) dbxStep = dx2 / (float)std::abs(dy2);
-
-    du1Step = 0; dv1Step = 0;
-    if (dy1) du1Step = du1 / (float)std::abs(dy1);
-    if (dy1) dv1Step = dv1 / (float)std::abs(dy1);
-    if (dy1) dw1Step = dw1 / (float)std::abs(dy1);
-
-    if (dy1) {
-        for (int i = y2; i <= y3; i++) {
-            int ax = x2 + (float)(i - y2) * daxStep;
-            int bx = x1 + (float)(i - y1) * dbxStep;
-
-            float texSu = u2 + (float)(i - y2) * du1Step;
-            float texSv = v2 + (float)(i - y2) * dv1Step;
-            float texSw = w2 + (float)(i - y2) * dw1Step;
-
-            float texEu = u1 + (float)(i - y1) * du2Step;
-            float texEv = v1 + (float)(i - y1) * dv2Step;
-            float texEw = w1 + (float)(i - y1) * dw2Step;
-
-            if (ax > bx) { std::swap(ax, bx); std::swap(texSu, texEu); std::swap(texSv, texEv); std::swap(texSw, texEw); }
-
-            texU = texSu;
-            texV = texSv;
-            texW = texSw;
-
-            float tstep = 1.f / ((float)(bx - ax));
-            float t = 0.f;
-
-            for (int j = ax; j < bx; j++) {
-                texU = (1.f - t) * texSu + t * texEu;
-                texV = (1.f - t) * texSv + t * texEv;
-                texW = (1.f - t) * texSw + t * texEw;
-                
-                float wInv = 1.0f / texW;
-                unsigned int u = static_cast<unsigned int>(texU * wInv * texWidth) % texWidth;
-                unsigned int v = static_cast<unsigned int>(texV * wInv * texHeight) % texHeight;
-
-                pixels.append(sf::Vertex{sf::Vector2f(j, i), image->getPixel({u, v})});
-
-                t += tstep;
-            }
-        }
-    }
-
-    window.draw(pixels);
 }
