@@ -26,27 +26,6 @@ void Camera::translateDown(float offset) { translateY(-offset); }
 void Camera::rotateHorizontal(float offset) { fYaw += offset; }
 void Camera::rotateVertical(float offset) { fPitch += offset; }
 
-// void Camera::rotateAroundPoint(const Vec3d& point, float yawOffset, float pitchOffset) {
-//     Vec3d direction = pos - point;
-//     float radius = direction.length();
-
-//     fYaw += yawOffset;
-//     fPitch += pitchOffset;
-
-//     const float maxPitch = 1.5707f;
-//     if (fPitch > maxPitch) fPitch = maxPitch;
-//     if (fPitch < -maxPitch) fPitch = -maxPitch;
-
-//     direction = Vec3d(
-//         cosf(fYaw) * cosf(fPitch),
-//         sinf(fPitch),
-//         sinf(fYaw) * cosf(fPitch)
-//     ) * radius;
-
-//     pos = point + direction;
-//     dir = (point - pos).normalize();
-// }
-
 void Camera::update() {
     const float maxPith = 1.5707f;
     if (fPitch > maxPith) fPitch = maxPith;

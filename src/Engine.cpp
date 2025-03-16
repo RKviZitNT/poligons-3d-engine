@@ -104,50 +104,7 @@ void Engine::update() {
 void Engine::draw() {
     m_window.clear(sf::Color::Black);
 
-    // sf::VertexArray drawingTriangles(sf::PrimitiveType::Triangles);
-    // sf::VertexArray drawingEdges(sf::PrimitiveType::Lines);
-    // sf::Color edgeColor(255, 128, 0);
-
-    //std::vector<sf::VertexArray> texturedTriangles;
-
     m_render.render(m_window, m_light);
-
-    // for (auto& triangle : triangles) {
-    //     if (glbl::render::textureVisible) {
-    //         texturedTriangles.emplace_back(triangle.texturedTriangle(m_depthBuffer));
-    //     }
-        // else {
-        //     sf::Color faceColor(triangle.col.r, triangle.col.g, triangle.col.b);
-
-        //     if (glbl::render::faceVisible) {
-        //         drawingTriangles.append(sf::Vertex{sf::Vector2f(triangle.p[0].x, triangle.p[0].y), faceColor});
-        //         drawingTriangles.append(sf::Vertex{sf::Vector2f(triangle.p[1].x, triangle.p[1].y), faceColor});
-        //         drawingTriangles.append(sf::Vertex{sf::Vector2f(triangle.p[2].x, triangle.p[2].y), faceColor});
-        //     }
-        // }
-        // if (glbl::render::edgeVisible) {
-        //     drawingEdges.append(sf::Vertex{sf::Vector2f(triangle.p[0].x, triangle.p[0].y), edgeColor});
-        //     drawingEdges.append(sf::Vertex{sf::Vector2f(triangle.p[1].x, triangle.p[1].y), edgeColor});
-        //     drawingEdges.append(sf::Vertex{sf::Vector2f(triangle.p[1].x, triangle.p[1].y), edgeColor});
-        //     drawingEdges.append(sf::Vertex{sf::Vector2f(triangle.p[2].x, triangle.p[2].y), edgeColor});
-        //     drawingEdges.append(sf::Vertex{sf::Vector2f(triangle.p[2].x, triangle.p[2].y), edgeColor});
-        //     drawingEdges.append(sf::Vertex{sf::Vector2f(triangle.p[0].x, triangle.p[0].y), edgeColor});
-        // }
-    //}
-
-    // if (glbl::render::faceVisible && drawingTriangles.getVertexCount() > 0) {
-    //     m_window.draw(drawingTriangles);
-    // }
-
-    // if (glbl::render::edgeVisible && drawingEdges.getVertexCount() > 0) {
-    //     m_window.draw(drawingEdges);
-    // }
-
-    // if (!texturedTriangles.empty()) {
-    //     for (auto& pixels : texturedTriangles) {
-    //         m_window.draw(pixels);
-    //     }
-    // }
 
     m_window.display();
 }
