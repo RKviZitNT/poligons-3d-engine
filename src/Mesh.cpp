@@ -2,40 +2,24 @@
 
 Mesh::Mesh(const std::string& modelFilename) {
     loadModel(modelFilename);
-    for (auto& t : m_triangles) {
-        t.isTextured = false;
-    }
 
-    m_position = Vec3d(0);
-    m_scale = Vec3d(1);
-    m_angle = Vec3d(0);
+    init();
 }
 
 Mesh::Mesh(const std::string& modelFilename, const std::string& textureFilename) {
     loadModel(modelFilename);
     loadTexture(textureFilename);
+
+    init();
 }
 
-Mesh::Mesh() {
-    m_triangles = {
-        Triangle( Vec3d(0.0f, 0.0f, 0.0f),  Vec3d(0.0f, 1.0f, 0.0f),  Vec3d(1.0f, 1.0f, 0.0f),  Vec2d(0.0f, 1.0f),  Vec2d(0.0f, 0.0f),  Vec2d(1.0f, 0.0f) ),
-        Triangle( Vec3d(0.0f, 0.0f, 0.0f),  Vec3d(1.0f, 1.0f, 0.0f),  Vec3d(1.0f, 0.0f, 0.0f),  Vec2d(0.0f, 1.0f),  Vec2d(1.0f, 0.0f),  Vec2d(1.0f, 1.0f) ),
-        Triangle( Vec3d(1.0f, 0.0f, 0.0f),  Vec3d(1.0f, 1.0f, 0.0f),  Vec3d(1.0f, 1.0f, 1.0f),  Vec2d(0.0f, 1.0f),  Vec2d(0.0f, 0.0f),  Vec2d(1.0f, 0.0f) ),
-        Triangle( Vec3d(1.0f, 0.0f, 0.0f),  Vec3d(1.0f, 1.0f, 1.0f),  Vec3d(1.0f, 0.0f, 1.0f),  Vec2d(0.0f, 1.0f),  Vec2d(1.0f, 0.0f),  Vec2d(1.0f, 1.0f) ),
-        Triangle( Vec3d(1.0f, 0.0f, 1.0f),  Vec3d(1.0f, 1.0f, 1.0f),  Vec3d(0.0f, 1.0f, 1.0f),  Vec2d(0.0f, 1.0f),  Vec2d(0.0f, 0.0f),  Vec2d(1.0f, 0.0f) ),
-        Triangle( Vec3d(1.0f, 0.0f, 1.0f),  Vec3d(0.0f, 1.0f, 1.0f),  Vec3d(0.0f, 0.0f, 1.0f),  Vec2d(0.0f, 1.0f),  Vec2d(1.0f, 0.0f),  Vec2d(1.0f, 1.0f) ),
-        Triangle( Vec3d(0.0f, 0.0f, 1.0f),  Vec3d(0.0f, 1.0f, 1.0f),  Vec3d(0.0f, 1.0f, 0.0f),  Vec2d(0.0f, 1.0f),  Vec2d(0.0f, 0.0f),  Vec2d(1.0f, 0.0f) ),
-        Triangle( Vec3d(0.0f, 0.0f, 1.0f),  Vec3d(0.0f, 1.0f, 0.0f),  Vec3d(0.0f, 0.0f, 0.0f),  Vec2d(0.0f, 1.0f),  Vec2d(1.0f, 0.0f),  Vec2d(1.0f, 1.0f) ),
-        Triangle( Vec3d(0.0f, 1.0f, 0.0f),  Vec3d(0.0f, 1.0f, 1.0f),  Vec3d(1.0f, 1.0f, 1.0f),  Vec2d(0.0f, 1.0f),  Vec2d(0.0f, 0.0f),  Vec2d(1.0f, 0.0f) ),
-        Triangle( Vec3d(0.0f, 1.0f, 0.0f),  Vec3d(1.0f, 1.0f, 1.0f),  Vec3d(1.0f, 1.0f, 0.0f),  Vec2d(0.0f, 1.0f),  Vec2d(1.0f, 0.0f),  Vec2d(1.0f, 1.0f) ),
-        Triangle( Vec3d(1.0f, 0.0f, 1.0f),  Vec3d(0.0f, 0.0f, 1.0f),  Vec3d(0.0f, 0.0f, 0.0f),  Vec2d(0.0f, 1.0f),  Vec2d(0.0f, 0.0f),  Vec2d(1.0f, 0.0f) ),
-        Triangle( Vec3d(1.0f, 0.0f, 1.0f),  Vec3d(0.0f, 0.0f, 0.0f),  Vec3d(1.0f, 0.0f, 0.0f),  Vec2d(0.0f, 1.0f),  Vec2d(1.0f, 0.0f),  Vec2d(1.0f, 1.0f) ),
-    };
-
+void Mesh::init() {
     m_position = Vec3d(0);
     m_scale = Vec3d(1);
     m_angle = Vec3d(0);
 }
+
+sf::Image* Mesh::getTexture() { return m_texture; }
 
 void Mesh::loadModel(std::string filename) {
     std::ifstream file(filename);
@@ -52,7 +36,10 @@ void Mesh::loadModel(std::string filename) {
 }
 
 void Mesh::loadTexture(std::string filename) {
-    return;
+    m_texture = new sf::Image;
+    if (!m_texture->loadFromFile(filename)) {
+        throw std::runtime_error("Failed to load texture");
+    }
 }
 
 void Mesh::parseLine(std::string& line) {
@@ -69,30 +56,91 @@ void Mesh::parseLine(std::string& line) {
         ss >> x >> y >> z;
         m_vertices.emplace_back(Vec3d(x, y, z));
     }
-    
-    if (type == "f") {
-        std::string v1, v2, v3;
-        ss >> v1 >> v2 >> v3;
-        int vertex1 = extractVertexIndex(v1);
-        int vertex2 = extractVertexIndex(v2);
-        int vertex3 = extractVertexIndex(v3);
+    else if (type == "vt") {
+        float u, v;
+        ss >> u >> v;
+        m_textureCoords.emplace_back(Vec2d(u, v));
+    }
+    else if (type == "f") {
+        std::vector<std::string> faceTokens;
+        std::string token;
+        while (ss >> token) faceTokens.push_back(token);
+        
+        if (faceTokens.size() < 3) return;
 
-        m_triangles.emplace_back(
-            Triangle(
-                m_vertices[vertex1 - 1],
-                m_vertices[vertex2 - 1],
-                m_vertices[vertex3 - 1]
-            )
+        // Первый треугольник
+        std::vector<int> vertices, texCoords;
+        for (size_t i = 0; i < 3; ++i) {
+            vertices.push_back(extractVertexIndex(faceTokens[i]));
+            texCoords.push_back(extractTextureIndex(faceTokens[i]));
+        }
+
+        Triangle tri(
+            m_vertices[vertices[0] - 1],
+            m_vertices[vertices[1] - 1],
+            m_vertices[vertices[2] - 1]
         );
+
+        if (all_of(texCoords.begin(), texCoords.end(), [](int t){ return t > 0; })) {
+            tri.setTextureCoords(
+                m_textureCoords[texCoords[0] - 1],
+                m_textureCoords[texCoords[1] - 1],
+                m_textureCoords[texCoords[2] - 1]
+            );
+        }
+
+        m_triangles.push_back(tri);
+
+        for (size_t i = 3; i < faceTokens.size(); ++i) {
+            vertices[1] = vertices[2];
+            texCoords[1] = texCoords[2];
+            
+            vertices[2] = extractVertexIndex(faceTokens[i]);
+            texCoords[2] = extractTextureIndex(faceTokens[i]);
+
+            Triangle newTri(
+                m_vertices[vertices[0] - 1],
+                m_vertices[vertices[1] - 1],
+                m_vertices[vertices[2] - 1]
+            );
+
+            if (all_of(texCoords.begin(), texCoords.end(), [](int t){ return t > 0; })) {
+                newTri.setTextureCoords(
+                    m_textureCoords[texCoords[0] - 1],
+                    m_textureCoords[texCoords[1] - 1],
+                    m_textureCoords[texCoords[2] - 1]
+                );
+            }
+
+            m_triangles.push_back(newTri);
+        }
     }
 }
 
-int Mesh::extractVertexIndex(std::string& token) {
+int Mesh::extractVertexIndex(const std::string& token) {
     size_t slashPos = token.find('/');
-    if (slashPos != std::string::npos) {
-        return std::stoi(token.substr(0, slashPos));
+    if (slashPos == std::string::npos) {
+        return std::stoi(token);
     }
-    return std::stoi(token);
+    return std::stoi(token.substr(0, slashPos));
+}
+
+int Mesh::extractTextureIndex(const std::string& token) {
+    size_t firstSlash = token.find('/');
+    if (firstSlash == std::string::npos) {
+        return -1;
+    }
+
+    size_t secondSlash = token.find('/', firstSlash + 1);
+    if (secondSlash == std::string::npos) {
+        std::string texIndexStr = token.substr(firstSlash + 1);
+        if (texIndexStr.empty()) {
+            return -1; 
+        }
+        return std::stoi(texIndexStr);
+    }
+
+    return -1;
 }
 
 void Mesh::translate(const Vec3d& offset) {

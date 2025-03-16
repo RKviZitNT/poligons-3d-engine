@@ -5,8 +5,7 @@ Engine::Engine() :
     m_isPaused(false),
     m_isMouseLocked(true),
     m_render(m_camera),
-    m_depthBuffer(glbl::window::width, glbl::window::height),
-    m_cube("resources/models/mountains.obj")
+    m_cube("resources/models/miku.obj", "resources/textures/miku_texture.bmp")
 {
     m_window.setMouseCursorVisible(!m_isMouseLocked);
     windowCenter = sf::Vector2i(m_window.getSize().x / 2, m_window.getSize().y / 2);
@@ -18,10 +17,6 @@ Engine::Engine() :
     m_cube.scale({0.2, 0.2, 0.2});
     m_render.addMesh(m_cube);
     m_light.setDir({0.8, 1, -0.5});
-
-    if (!m_image.loadFromFile("resources/textures/bedrock.png")) {
-        throw std::runtime_error("Failed to load texture");
-    }
 }
 
 void Engine::run() {
@@ -80,12 +75,14 @@ void Engine::handleEvents() {
         }
     }
 
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) { m_camera.translateForwardNoY(m_cameraTranslateSpeed * deltaTime.asSeconds()); }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) { m_camera.translateLeft(m_cameraTranslateSpeed * deltaTime.asSeconds()); }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) { m_camera.translateBackNoY(m_cameraTranslateSpeed * deltaTime.asSeconds()); }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) { m_camera.translateRight(m_cameraTranslateSpeed * deltaTime.asSeconds()); }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) { m_camera.translateUp(m_cameraTranslateSpeed * deltaTime.asSeconds()); }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift)) { m_camera.translateDown(m_cameraTranslateSpeed * deltaTime.asSeconds()); }
+    float translateSpeed = m_cameraTranslateSpeed * deltaTime.asSeconds();
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) { m_camera.translateForwardNoY(translateSpeed); }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) { m_camera.translateLeft(translateSpeed); }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) { m_camera.translateBackNoY(translateSpeed); }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) { m_camera.translateRight(translateSpeed); }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) { m_camera.translateUp(translateSpeed); }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift)) { m_camera.translateDown(translateSpeed); }
 
     if (m_isMouseLocked) {
         sf::Vector2i mousePosition = sf::Mouse::getPosition(m_window);
@@ -106,18 +103,19 @@ void Engine::update() {
 
 void Engine::draw() {
     m_window.clear(sf::Color::Black);
-    m_depthBuffer.clear(0.f);
 
-    sf::VertexArray drawingTriangles(sf::PrimitiveType::Triangles);
-    sf::VertexArray drawingEdges(sf::PrimitiveType::Lines);
-    sf::Color edgeColor(255, 128, 0);
+    // sf::VertexArray drawingTriangles(sf::PrimitiveType::Triangles);
+    // sf::VertexArray drawingEdges(sf::PrimitiveType::Lines);
+    // sf::Color edgeColor(255, 128, 0);
 
-    std::vector<Triangle> triangles = m_render.render(m_light);
+    //std::vector<sf::VertexArray> texturedTriangles;
 
-    for (auto& triangle : triangles) {
-        if (glbl::render::textureVisible) {
-            triangle.texturedTriangle(m_depthBuffer, &m_image, m_window);
-        }
+    m_render.render(m_window, m_light);
+
+    // for (auto& triangle : triangles) {
+    //     if (glbl::render::textureVisible) {
+    //         texturedTriangles.emplace_back(triangle.texturedTriangle(m_depthBuffer));
+    //     }
         // else {
         //     sf::Color faceColor(triangle.col.r, triangle.col.g, triangle.col.b);
 
@@ -135,15 +133,21 @@ void Engine::draw() {
         //     drawingEdges.append(sf::Vertex{sf::Vector2f(triangle.p[2].x, triangle.p[2].y), edgeColor});
         //     drawingEdges.append(sf::Vertex{sf::Vector2f(triangle.p[0].x, triangle.p[0].y), edgeColor});
         // }
-    }
+    //}
 
-    if (glbl::render::faceVisible && drawingTriangles.getVertexCount() > 0) {
-        m_window.draw(drawingTriangles);
-    }
+    // if (glbl::render::faceVisible && drawingTriangles.getVertexCount() > 0) {
+    //     m_window.draw(drawingTriangles);
+    // }
 
-    if (glbl::render::edgeVisible && drawingEdges.getVertexCount() > 0) {
-        m_window.draw(drawingEdges);
-    }
+    // if (glbl::render::edgeVisible && drawingEdges.getVertexCount() > 0) {
+    //     m_window.draw(drawingEdges);
+    // }
+
+    // if (!texturedTriangles.empty()) {
+    //     for (auto& pixels : texturedTriangles) {
+    //         m_window.draw(pixels);
+    //     }
+    // }
 
     m_window.display();
 }

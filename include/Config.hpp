@@ -9,7 +9,7 @@ namespace glbl {
         constexpr int width = 1920;
         constexpr int height = 1080;
 
-        constexpr int frameRate = 240;
+        constexpr int frameRate = 10000;
     }
 
     namespace render {
@@ -21,6 +21,8 @@ namespace glbl {
         constexpr bool faceVisible = true;
         constexpr bool backFaceVisible = false;
         constexpr bool edgeVisible = false;
+
+        constexpr bool lightRender = false;
     }
 
     inline void debug() {

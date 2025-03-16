@@ -1,8 +1,23 @@
 #include "math/Triangle.hpp"
 
 Triangle::Triangle() : p{ Vec3d(), Vec3d(), Vec3d() } {}
-Triangle::Triangle(Vec3d p1, Vec3d p2, Vec3d p3, Color color) : p{ p1, p2, p3 }, col(color) {}
-Triangle::Triangle(Vec3d p1, Vec3d p2, Vec3d p3, Vec2d t1, Vec2d t2, Vec2d t3) : p{ p1, p2, p3 }, t{ t1, t2, t3 } {}
+Triangle::Triangle(Vec3d p1, Vec3d p2, Vec3d p3) : p{ p1, p2, p3 } {}
+
+void Triangle::setColor(Color color) { col = color; }
+void Triangle::setTextureCoords(Vec2d t1, Vec2d t2, Vec2d t3) {
+    t[0] = t1;
+    t[1] = t2;
+    t[2] = t3;
+}
+
+void Triangle::scalingToDisplay() {
+    scaleX(-1);
+    scaleY(-1);
+    translateX(1.f);
+    translateY(1.f);
+    scaleX(0.5f * glbl::window::width);
+    scaleY(0.5f * glbl::window::height);
+}
 
 void Triangle::translateX(float f) { for (auto& v : p) { v.x += f; } }
 void Triangle::translateY(float f) { for (auto& v : p) { v.y += f; } }
@@ -41,8 +56,7 @@ Triangle& Triangle::operator*=(const Mat4x4& mat) {
     return *this;
 }
 
-void Triangle::texturedTriangle(DepthBuffer& depthBuffer, sf::Image *image, sf::RenderWindow& window)
-{
+sf::VertexArray Triangle::texturedTriangle(DepthBuffer& depthBuffer, sf::Image* texture) {
     int   y1 = p[0].y, y2 = p[1].y, y3 = p[2].y;
     int   x1 = p[0].x, x2 = p[1].x, x3 = p[2].x;
     float u1 = t[0].u, u2 = t[1].u, u3 = t[2].u;
@@ -85,8 +99,12 @@ void Triangle::texturedTriangle(DepthBuffer& depthBuffer, sf::Image *image, sf::
 
     sf::VertexArray pixels(sf::PrimitiveType::Points);
 
-    unsigned int texWidth = image->getSize().x;
-    unsigned int texHeight = image->getSize().y;
+    unsigned int texWidth, texHeight;
+
+    if (texture && glbl::render::textureVisible) {
+        texWidth = texture->getSize().x;
+        texHeight = texture->getSize().y;
+    }
 
     if (dy1) {
         for (int i = y1; i <= y2; i++) {
@@ -116,12 +134,15 @@ void Triangle::texturedTriangle(DepthBuffer& depthBuffer, sf::Image *image, sf::
                 texW = (1.f - t) * texSw + t * texEw;
 
                 float wInv = 1.0f / texW;
-                unsigned int u = static_cast<unsigned int>(std::clamp(texU * wInv * texWidth, 0.0f, static_cast<float>(texWidth-1)));
-                unsigned int v = static_cast<unsigned int>(std::clamp(texV * wInv * texHeight, 0.0f, static_cast<float>(texHeight-1)));
 
                 if (texW > depthBuffer(i * glbl::window::width + j)) {
-                    if (isTextured) pixels.append(sf::Vertex{sf::Vector2f(j, i), image->getPixel({u, v})});
-                    else pixels.append(sf::Vertex{sf::Vector2f(j, i), sf::Color(col.r, col.g, col.b)});
+                    if (texture && glbl::render::textureVisible) {   
+                        unsigned int u = static_cast<unsigned int>(std::clamp(texU * wInv * texWidth, 0.0f, static_cast<float>(texWidth-1)));
+                        unsigned int v = static_cast<unsigned int>(std::clamp(texV * wInv * texHeight, 0.0f, static_cast<float>(texHeight-1)));
+                        pixels.append(sf::Vertex{sf::Vector2f(j, i), texture->getPixel({u, v})});
+                    } else {
+                        pixels.append(sf::Vertex{sf::Vector2f(j, i), sf::Color(col.r, col.g, col.b)});
+                    }
 
                     depthBuffer(i * glbl::window::width + j) = texW;
                 }
@@ -173,12 +194,15 @@ void Triangle::texturedTriangle(DepthBuffer& depthBuffer, sf::Image *image, sf::
                 texW = (1.f - t) * texSw + t * texEw;
                 
                 float wInv = 1.0f / texW;
-                unsigned int u = static_cast<unsigned int>(std::clamp(texU * wInv * texWidth, 0.0f, static_cast<float>(texWidth-1)));
-                unsigned int v = static_cast<unsigned int>(std::clamp(texV * wInv * texHeight, 0.0f, static_cast<float>(texHeight-1)));
-
+                
                 if (texW > depthBuffer(i * glbl::window::width + j)) {
-                    if (isTextured) pixels.append(sf::Vertex{sf::Vector2f(j, i), image->getPixel({u, v})});
-                    else pixels.append(sf::Vertex{sf::Vector2f(j, i), sf::Color(col.r, col.g, col.b)});
+                    if (texture && glbl::render::textureVisible) {   
+                        unsigned int u = static_cast<unsigned int>(std::clamp(texU * wInv * texWidth, 0.0f, static_cast<float>(texWidth-1)));
+                        unsigned int v = static_cast<unsigned int>(std::clamp(texV * wInv * texHeight, 0.0f, static_cast<float>(texHeight-1)));
+                        pixels.append(sf::Vertex{sf::Vector2f(j, i), texture->getPixel({u, v})});
+                    } else {
+                        pixels.append(sf::Vertex{sf::Vector2f(j, i), sf::Color(col.r, col.g, col.b)});
+                    }
 
                     depthBuffer(i * glbl::window::width + j) = texW;
                 }
@@ -188,7 +212,7 @@ void Triangle::texturedTriangle(DepthBuffer& depthBuffer, sf::Image *image, sf::
         }
     }
 
-    window.draw(pixels);
+    return pixels;
 }
 
 int Triangle::clipAgainsPlane(const Vec3d& planePoint, const Vec3d& planeNormal, const Triangle& inTri, Triangle& outTri1, Triangle& outTri2) {

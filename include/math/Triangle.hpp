@@ -16,19 +16,13 @@ public:
     Vec2d t[3];
     Color col;
 
-    bool isTextured = false;
-
     Triangle();
-    Triangle(Vec3d p1, Vec3d p2, Vec3d p3, Color color = Color());
-    Triangle(Vec3d p1, Vec3d p2, Vec3d p3, Vec2d t1, Vec2d t2, Vec2d t3);
+    Triangle(Vec3d p1, Vec3d p2, Vec3d p3);
 
-    void translateX(float f);
-    void translateY(float f);
-    void translateZ(float f);
+    void setColor(Color color);
+    void setTextureCoords(Vec2d t1, Vec2d t2, Vec2d t3);
 
-    void scaleX(float f);
-    void scaleY(float f);
-    void scaleZ(float f);
+    void scalingToDisplay();
 
     Vec3d getNormal() const;
 
@@ -38,7 +32,16 @@ public:
 
     Triangle& operator*=(const Mat4x4& mat);
     
-    void texturedTriangle(DepthBuffer& depthBuffer, sf::Image *image, sf::RenderWindow& window);
+    sf::VertexArray texturedTriangle(DepthBuffer& depthBuffer, sf::Image* texture);
 
     static int clipAgainsPlane(const Vec3d& planePoint, const Vec3d& planeNormal, const Triangle& inTri, Triangle& outTri1, Triangle& outTri2);
+
+private:
+    void translateX(float f);
+    void translateY(float f);
+    void translateZ(float f);
+
+    void scaleX(float f);
+    void scaleY(float f);
+    void scaleZ(float f);
 };

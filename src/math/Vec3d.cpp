@@ -1,18 +1,19 @@
 #include "math/Vec3d.hpp"
 
-Vec3d::Vec3d() : x(0), y(0), z(0), w(1) {}
 Vec3d::Vec3d(float xyz) : x(xyz), y(xyz), z(xyz), w(1) {}
 Vec3d::Vec3d(float x_, float y_, float z_) : x(x_), y(y_), z(z_), w(1) {}
 
-Vec3d Vec3d::operator+(const Vec3d& other) const { return {x + other.x, y + other.y, z + other.z}; }
-Vec3d Vec3d::operator-(const Vec3d& other) const { return {x - other.x, y - other.y, z - other.z}; }
-Vec3d Vec3d::operator*(const Vec3d& other) const { return {x * other.x, y * other.y, z * other.z}; }
-Vec3d Vec3d::operator/(const Vec3d& other) const { return {x / other.x, y / other.y, z / other.z}; }
+Vec3d Vec3d::operator+(const Vec3d& other) const { return { x + other.x, y + other.y, z + other.z }; }
+Vec3d Vec3d::operator-(const Vec3d& other) const { return { x - other.x, y - other.y, z - other.z }; }
+Vec3d Vec3d::operator*(const Vec3d& other) const { return { x * other.x, y * other.y, z * other.z }; }
+Vec3d Vec3d::operator/(const Vec3d& other) const { return { x / other.x, y / other.y, z / other.z }; }
 
-Vec3d Vec3d::operator+(const float& f) const { return {x + f, y + f, z + f}; }
-Vec3d Vec3d::operator-(const float& f) const { return {x - f, y - f, z - f}; }
-Vec3d Vec3d::operator*(const float& f) const { return {x * f, y * f, z * f}; }
-Vec3d Vec3d::operator/(const float& f) const { return {x / f, y / f, z / f}; }
+Vec3d Vec3d::operator+(const float& f) const { return { x + f, y + f, z + f }; }
+Vec3d Vec3d::operator-(const float& f) const { return { x - f, y - f, z - f }; }
+Vec3d Vec3d::operator*(const float& f) const { return { x * f, y * f, z * f }; }
+Vec3d Vec3d::operator/(const float& f) const { return { x / f, y / f, z / f }; }
+
+Vec3d Vec3d::operator-() const { return { -x, -y, -z }; }
 
 Vec3d& Vec3d::operator+=(const Vec3d& other) { x += other.x; y += other.y; z += other.z; return *this; }
 Vec3d& Vec3d::operator-=(const Vec3d& other) { x -= other.x; y -= other.y; z -= other.z; return *this; }

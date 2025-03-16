@@ -8,7 +8,6 @@
 #include "Mesh.hpp"
 #include "Light.hpp"
 #include "Render.hpp"
-#include "DepthBuffer.hpp"
 #include "math/Mat4x4.hpp"
 #include "math/Triangle.hpp"
 #include "math/Vec3d.hpp"
@@ -27,14 +26,10 @@ private:
     sf::RenderWindow m_window;
     sf::Time deltaTime;
 
-    sf::ConvexShape face;
-    sf::VertexArray edge;
-
     sf::Vector2i windowCenter;
     bool m_isMouseLocked;
     bool m_isPaused;
 
-    DepthBuffer m_depthBuffer;
     Render m_render;
     Camera m_camera;
     Light m_light;
@@ -42,6 +37,4 @@ private:
     Mesh m_cube;
     
     float m_cameraTranslateSpeed, m_cameraRotateSpeed;
-
-    sf::Image m_image;
 };

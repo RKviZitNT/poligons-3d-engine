@@ -33,5 +33,5 @@ void DepthBuffer::validateDimensions(int width, int height) const {
 }
 
 void DepthBuffer::validateCoordinates(int index) const {
-    if (index >= m_width * m_height) { throw std::out_of_range("Invalid coordinates"); }
+    if (index > m_width * m_height || index < 0) { throw std::out_of_range("Invalid coordinates"); }
 }

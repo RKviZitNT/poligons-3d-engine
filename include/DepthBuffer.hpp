@@ -6,7 +6,7 @@
 
 class DepthBuffer {
 public:
-    DepthBuffer();
+    DepthBuffer() = default;
     DepthBuffer(int width, int height);
     
     DepthBuffer(const DepthBuffer&) = delete;

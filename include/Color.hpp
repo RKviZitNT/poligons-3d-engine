@@ -4,14 +4,14 @@
 
 class Color {
 public:
-    float r, g, b;
+    float r = 255, g = 255, b = 255;
 
-    Color();
+    Color() = default;
     Color(float gray);
     Color(float r_, float g_, float b_);
 
     void setBrightness(float brightness);
 
 private:
-    float m_r, m_g, m_b;
+    float m_r = 255, m_g = 255, m_b = 255;
 };

@@ -2,10 +2,10 @@
 
 class Vec2d {
 public:
-    float u, v;
-    float w;
+    float u = 0, v = 0;
+    float w = 1;
 
-    Vec2d();
+    Vec2d() = default;
     Vec2d(float uv);
     Vec2d(float u_, float v_);
 
@@ -18,6 +18,8 @@ public:
     Vec2d operator-(const float& f) const;
     Vec2d operator*(const float& f) const;
     Vec2d operator/(const float& f) const;
+
+    Vec2d operator-() const;
 
     Vec2d& operator+=(const Vec2d& other);
     Vec2d& operator-=(const Vec2d& other);
@@ -33,6 +35,4 @@ public:
     void setW(float w_);
 
     void intersectPlane(const Vec2d& lineStart, const Vec2d& lineEnd, float& t);
-
-private:
 };
