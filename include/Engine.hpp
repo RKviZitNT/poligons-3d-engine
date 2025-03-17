@@ -2,16 +2,12 @@
 
 #include <SFML/Graphics.hpp>
 #include <vector>
-#include <cmath>
 
 #include "Config.hpp"
-#include "Mesh.hpp"
-#include "Light.hpp"
-#include "Render.hpp"
-#include "math/Mat4x4.hpp"
-#include "math/Triangle.hpp"
 #include "math/Vec3d.hpp"
-#include "math/Vec2d.hpp"
+#include "components/geometry/Mesh.hpp"
+#include "components/lightning/Light.hpp"
+#include "rendering/Render.hpp"
 
 class Engine {
 public:

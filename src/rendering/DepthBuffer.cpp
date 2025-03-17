@@ -1,5 +1,5 @@
-#include "DepthBuffer.hpp"
-#include "Config.hpp"
+#include "rendering/DepthBuffer.hpp"
+
 DepthBuffer::DepthBuffer(int width, int height) { resize(width, height); }
 
 void DepthBuffer::resize(int width, int height) {

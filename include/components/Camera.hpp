@@ -2,6 +2,7 @@
 
 #include <cmath>
 
+#include "Config.hpp"
 #include "math/Vec3d.hpp"
 
 class Camera {
@@ -33,7 +34,7 @@ public:
 
 private:
     Vec3d pos, dir;
-    float fYaw = 1.57;
+    float fYaw = glbl::rad;
     float fPitch = 0;
 
     void update();

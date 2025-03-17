@@ -5,13 +5,13 @@
 #include <deque>
 
 #include "Config.hpp"
-#include "Camera.hpp"
-#include "Mesh.hpp"
-#include "Light.hpp"
-#include "DepthBuffer.hpp"
 #include "math/Mat4x4.hpp"
 #include "math/Vec3d.hpp"
-#include "math/Triangle.hpp"
+#include "components/geometry/Triangle.hpp"
+#include "components/Camera.hpp"
+#include "components/geometry/Mesh.hpp"
+#include "components/lightning/Light.hpp"
+#include "rendering/DepthBuffer.hpp"
 
 class Render {
 public:

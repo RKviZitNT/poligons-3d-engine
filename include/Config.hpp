@@ -3,11 +3,12 @@
 #include <iostream>
 
 namespace glbl {
-    constexpr float pi = 3.14159f;
+    constexpr float pi = 3.14159265f;
+    constexpr float rad = pi / 2 - 0.00001f;
 
     namespace window {
-        constexpr int width = 1200;
-        constexpr int height = 800;
+        constexpr int width = 1920;
+        constexpr int height = 1080;
 
         constexpr int frameRate = 10000;
     }
@@ -15,14 +16,14 @@ namespace glbl {
     namespace render {
         constexpr float fNear = 0.1f;
         constexpr float fFar = 1000.f;
-        constexpr float fFov = 90.f;
+        constexpr float fFov = 80.f;
 
         constexpr bool textureVisible = true;
         constexpr bool faceVisible = true;
-        constexpr bool backFaceVisible = true;
+        constexpr bool backFaceVisible = false;
         constexpr bool edgeVisible = false;
 
-        constexpr bool lightRender = false;
+        constexpr bool liteRender = false;
     }
 
     inline void debug() {

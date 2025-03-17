@@ -1,4 +1,4 @@
-#include "Mesh.hpp"
+#include "components/geometry/Mesh.hpp"
 
 Mesh::Mesh(const std::string& modelFilename) {
     loadModel(modelFilename);

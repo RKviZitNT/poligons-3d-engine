@@ -8,12 +8,12 @@
 #include <algorithm>
 
 #include "Config.hpp"
-#include "Camera.hpp"
-#include "Color.hpp"
 #include "math/Mat4x4.hpp"
 #include "math/Vec3d.hpp"
 #include "math/Vec2d.hpp"
-#include "math/Triangle.hpp"
+#include "components/geometry/Triangle.hpp"
+#include "components/Camera.hpp"
+#include "components/props/Color.hpp"
 
 class Mesh {
 public:

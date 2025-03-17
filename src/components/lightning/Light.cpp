@@ -1,4 +1,4 @@
-#include "Light.hpp"
+#include "components/lightning/Light.hpp"
 
 Light::Light(Vec3d direction) {
     setDir(direction);

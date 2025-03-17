@@ -1,13 +1,16 @@
 #pragma once
 
 #include <initializer_list>
+#include <array>
 #include <cmath>
+
+#include "Config.hpp"
 
 class Vec3d;
 
 class Mat4x4 {
 public:
-    float m[4][4] = { 0 };
+    std::array<std::array<float, 4>, 4> m;
 
     Mat4x4() = default;
     Mat4x4(std::initializer_list<std::initializer_list<float>> values);

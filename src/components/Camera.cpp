@@ -1,5 +1,4 @@
-#include "Camera.hpp"
-#include <cmath>
+#include "components/Camera.hpp"
 
 Camera::Camera() : pos(Vec3d(0)), dir({0, 0, 1}) {}
 Camera::Camera(Vec3d direction, Vec3d position) : dir(direction), pos(position) {}
@@ -27,7 +26,7 @@ void Camera::rotateHorizontal(float offset) { fYaw += offset; }
 void Camera::rotateVertical(float offset) { fPitch += offset; }
 
 void Camera::update() {
-    const float maxPith = 1.5707f;
+    const float maxPith = glbl::rad;
     if (fPitch > maxPith) fPitch = maxPith;
     if (fPitch < -maxPith) fPitch = -maxPith;
 

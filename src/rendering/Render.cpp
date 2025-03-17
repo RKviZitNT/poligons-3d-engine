@@ -1,4 +1,4 @@
-#include "Render.hpp"
+#include "rendering/Render.hpp"
 
 Render::Render(Camera& camera) : m_camera(camera), m_depthBuffer(glbl::window::width, glbl::window::height) {}
 
@@ -26,7 +26,7 @@ void Render::render(sf::RenderWindow& window, Light light) {
 
         for (auto& triangle : triangles) {
             if (glbl::render::backFaceVisible || triangle.getNormal().dot(triangle.p[0] - m_camera.getPos()) < 0) {
-                triangle.col.setBrightness(std::max(0.15f, triangle.getNormal().dot(light.getDir())));
+                triangle.illumination = std::max(0.3f, triangle.getNormal().dot(light.getDir()));
     
                 Triangle projectedTriangle = triangle;
                 projectedTriangle *= matView;
@@ -45,7 +45,7 @@ void Render::render(sf::RenderWindow& window, Light light) {
             }
         }
 
-        if (glbl::render::lightRender) {
+        if (glbl::render::liteRender) {
             std::sort(projectedTriangles.begin(), projectedTriangles.end(), [](const Triangle& t1, const Triangle& t2) {
                 return (t1.p[0].z + t1.p[1].z + t1.p[2].z)/3 > (t2.p[0].z + t2.p[1].z + t2.p[2].z)/3;
             });
@@ -83,16 +83,16 @@ void Render::render(sf::RenderWindow& window, Light light) {
             for (const auto& tri : triangles) { renderedTriangles.emplace_back(tri); }
         }
         
-        if (!glbl::render::lightRender) {
+        if (!glbl::render::liteRender) {
             for (auto& triangle : renderedTriangles) {
                 texturedTriangles.emplace_back(triangle.texturedTriangle(m_depthBuffer, mesh->getTexture()));
             }
         }
     }
 
-    if (glbl::render::lightRender) {
+    if (glbl::render::liteRender) {
         for (const auto& triangle : renderedTriangles) {
-            sf::Color faceColor(triangle.col.r, triangle.col.g, triangle.col.b);
+            sf::Color faceColor(triangle.col.r * triangle.illumination, triangle.col.g * triangle.illumination, triangle.col.b * triangle.illumination);
 
             if (glbl::render::faceVisible) {
                 drawingTriangles.append(sf::Vertex{sf::Vector2f(triangle.p[0].x, triangle.p[0].y), faceColor});

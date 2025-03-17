@@ -78,7 +78,7 @@ Mat4x4 Mat4x4::rotationZ(float angle) {
 }
 
 Mat4x4 Mat4x4::projection(float fNear, float fFar, float fFov, float fAspectRatio) {
-    float fFovRad = 1.f / tanf(fFov * 0.5f * (3.14159265f / 180.f));
+    float fFovRad = 1.f / tanf(fFov * 0.5f * (glbl::pi / 180.f));
     return Mat4x4{
         { fAspectRatio * fFovRad,  0,        0,                                 0 },
         { 0,                       fFovRad,  0,                                 0 },

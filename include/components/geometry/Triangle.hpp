@@ -1,20 +1,23 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include <array>
 #include <algorithm>
 
-#include "Vec2d.hpp"
-#include "Vec3d.hpp"
-#include "Mat4x4.hpp"
 #include "Config.hpp"
-#include "Color.hpp"
-#include "DepthBuffer.hpp"
+#include "math/Vec2d.hpp"
+#include "math/Vec3d.hpp"
+#include "math/Mat4x4.hpp"
+#include "components/props/Color.hpp"
+#include "rendering/DepthBuffer.hpp"
 
 class Triangle {
 public:
-    Vec3d p[3];
-    Vec2d t[3];
+    std::array<Vec3d, 3> p;
+    std::array<Vec2d, 3> t;
+
     Color col;
+    float illumination;
 
     Triangle();
     Triangle(Vec3d p1, Vec3d p2, Vec3d p3);
