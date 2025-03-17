@@ -6,8 +6,8 @@ namespace glbl {
     constexpr float pi = 3.14159f;
 
     namespace window {
-        constexpr int width = 1920;
-        constexpr int height = 1080;
+        constexpr int width = 1200;
+        constexpr int height = 800;
 
         constexpr int frameRate = 10000;
     }
@@ -19,7 +19,7 @@ namespace glbl {
 
         constexpr bool textureVisible = true;
         constexpr bool faceVisible = true;
-        constexpr bool backFaceVisible = false;
+        constexpr bool backFaceVisible = true;
         constexpr bool edgeVisible = false;
 
         constexpr bool lightRender = false;

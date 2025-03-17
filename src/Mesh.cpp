@@ -43,104 +43,73 @@ void Mesh::loadTexture(std::string filename) {
 }
 
 void Mesh::parseLine(std::string& line) {
-    if (line.empty() || line[0] == '#') {
-        return;
+    std::istringstream iss(line);
+    std::string prefix;
+    iss >> prefix;
+    
+    if (prefix == "v") {
+        Vec3d vertex;
+        iss >> vertex.x >> vertex.y >> vertex.z;
+        m_vertices.push_back(vertex);
     }
 
-    std::istringstream ss(line);
-    std::string type;
-    ss >> type;
-
-    if (type == "v") {
-        float x, y, z;
-        ss >> x >> y >> z;
-        m_vertices.emplace_back(Vec3d(x, y, z));
-    }
-    else if (type == "vt") {
-        float u, v;
-        ss >> u >> v;
-        m_textureCoords.emplace_back(Vec2d(u, v));
-    }
-    else if (type == "f") {
-        std::vector<std::string> faceTokens;
-        std::string token;
-        while (ss >> token) faceTokens.push_back(token);
+    else if (prefix == "vt") {
+        Vec2d texCoord;
+        iss >> texCoord.u >> texCoord.v;
         
-        if (faceTokens.size() < 3) return;
+        texCoord.v = 1.0f - texCoord.v;
+        
+        m_textureCoords.push_back(texCoord);
+    }
 
-        // Первый треугольник
-        std::vector<int> vertices, texCoords;
-        for (size_t i = 0; i < 3; ++i) {
-            vertices.push_back(extractVertexIndex(faceTokens[i]));
-            texCoords.push_back(extractTextureIndex(faceTokens[i]));
-        }
-
-        Triangle tri(
-            m_vertices[vertices[0] - 1],
-            m_vertices[vertices[1] - 1],
-            m_vertices[vertices[2] - 1]
-        );
-
-        if (all_of(texCoords.begin(), texCoords.end(), [](int t){ return t > 0; })) {
-            tri.setTextureCoords(
-                m_textureCoords[texCoords[0] - 1],
-                m_textureCoords[texCoords[1] - 1],
-                m_textureCoords[texCoords[2] - 1]
-            );
-        }
-
-        m_triangles.push_back(tri);
-
-        for (size_t i = 3; i < faceTokens.size(); ++i) {
-            vertices[1] = vertices[2];
-            texCoords[1] = texCoords[2];
+    else if (prefix == "f") {
+        std::vector<int> vertexIndices;
+        std::vector<int> textureIndices;
+        std::string token;
+        
+        while (iss >> token) {
+            int vIdx = extractVertexIndex(token);
+            int tIdx = extractTextureIndex(token);
             
-            vertices[2] = extractVertexIndex(faceTokens[i]);
-            texCoords[2] = extractTextureIndex(faceTokens[i]);
+            vertexIndices.push_back(vIdx);
+            textureIndices.push_back(tIdx);
+        }
 
-            Triangle newTri(
-                m_vertices[vertices[0] - 1],
-                m_vertices[vertices[1] - 1],
-                m_vertices[vertices[2] - 1]
+        for (size_t i = 1; i + 1 < vertexIndices.size(); ++i) {
+            Triangle tri(
+                m_vertices[vertexIndices[0]],
+                m_vertices[vertexIndices[i]],
+                m_vertices[vertexIndices[i + 1]]
             );
 
-            if (all_of(texCoords.begin(), texCoords.end(), [](int t){ return t > 0; })) {
-                newTri.setTextureCoords(
-                    m_textureCoords[texCoords[0] - 1],
-                    m_textureCoords[texCoords[1] - 1],
-                    m_textureCoords[texCoords[2] - 1]
+            if (!textureIndices.empty() && textureIndices[0] != -1) {
+                tri.setTextureCoords(
+                    m_textureCoords[textureIndices[0]],
+                    m_textureCoords[textureIndices[i]],
+                    m_textureCoords[textureIndices[i + 1]]
                 );
             }
-
-            m_triangles.push_back(newTri);
+            
+            m_triangles.push_back(tri);
         }
     }
 }
 
 int Mesh::extractVertexIndex(const std::string& token) {
-    size_t slashPos = token.find('/');
-    if (slashPos == std::string::npos) {
-        return std::stoi(token);
-    }
-    return std::stoi(token.substr(0, slashPos));
+    size_t pos = token.find('/');
+    return (pos != std::string::npos) ? std::stoi(token.substr(0, pos)) - 1 : std::stoi(token) - 1;
 }
 
 int Mesh::extractTextureIndex(const std::string& token) {
     size_t firstSlash = token.find('/');
-    if (firstSlash == std::string::npos) {
-        return -1;
-    }
-
+    if (firstSlash == std::string::npos) return -1;
+    
     size_t secondSlash = token.find('/', firstSlash + 1);
     if (secondSlash == std::string::npos) {
-        std::string texIndexStr = token.substr(firstSlash + 1);
-        if (texIndexStr.empty()) {
-            return -1; 
-        }
-        return std::stoi(texIndexStr);
+        return std::stoi(token.substr(firstSlash + 1)) - 1;
     }
-
-    return -1;
+    
+    return std::stoi(token.substr(firstSlash + 1, secondSlash - firstSlash - 1)) - 1;
 }
 
 void Mesh::translate(const Vec3d& offset) {

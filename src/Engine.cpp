@@ -5,7 +5,7 @@ Engine::Engine() :
     m_isPaused(false),
     m_isMouseLocked(true),
     m_render(m_camera),
-    m_cube("resources/models/miku.obj", "resources/textures/miku_texture.bmp")
+    m_cube("resources/models/level.obj", "resources/textures/leveltexhigh.png")
 {
     m_window.setMouseCursorVisible(!m_isMouseLocked);
     windowCenter = sf::Vector2i(m_window.getSize().x / 2, m_window.getSize().y / 2);
@@ -97,8 +97,6 @@ void Engine::handleEvents() {
 
 void Engine::update() {
     m_render.update();
-
-    // m_cube.rotate({1 * deltaTime.asSeconds(), 1 * deltaTime.asSeconds(), 0});
 }
 
 void Engine::draw() {
