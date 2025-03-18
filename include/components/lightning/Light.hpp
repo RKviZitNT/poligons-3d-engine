@@ -18,14 +18,16 @@ limitations under the License.
 
 #include "math/Vec3d.hpp"
 
+// Класс для представления источника света (направленный свет)
 class Light {
 public:
-    Light() = default;
-    Light(Vec3d direction);
+    Light() = default;  // Конструктор по умолчанию
+    Light(Vec3d direction);  // Конструктор с заданием направления света
 
-    void setDir(Vec3d direction);
-    Vec3d getDir();
+    // Методы для управления направлением света
+    void setDir(Vec3d direction);  // Установка направления света
+    Vec3d getDir();  // Получение текущего направления света
 
 private:
-    Vec3d dir;
+    Vec3d dir;  // Направление света (нормализованный вектор)
 };

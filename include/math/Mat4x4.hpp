@@ -22,23 +22,33 @@ limitations under the License.
 
 #include "Config.hpp"
 
-class Vec3d;
+class Vec3d;  // Даём знать программе, что существует класс Vec3d (для использования в методах)
 
+// Класс для работы с матрицей 4x4 (используется для трансформаций и проекций)
 class Mat4x4 {
 public:
-    std::array<std::array<float, 4>, 4> m;
+    std::array<std::array<float, 4>, 4> m;  // Матрица 4x4 (двумерный массив)
 
-    Mat4x4() = default;
-    Mat4x4(std::initializer_list<std::initializer_list<float>> values);
+    // Конструкторы
+    Mat4x4() = default;  // Конструктор по умолчанию (инициализация нулями)
+    Mat4x4(std::initializer_list<std::initializer_list<float>> values);  // Инициализация списком значений
 
-    Mat4x4 operator*(const Mat4x4& other) const;
+    // Перегрузка оператора умножения матриц
+    Mat4x4 operator*(const Mat4x4& other) const;  // Умножение матриц
 
-    static Mat4x4 translation(float x, float y, float z);
-    static Mat4x4 scale(float scaleX, float scaleY, float scaleZ);
-    static Mat4x4 rotationX(float angle);
-    static Mat4x4 rotationY(float angle);
-    static Mat4x4 rotationZ(float angle);
+    // Статические методы для создания матриц трансформаций
+    static Mat4x4 translation(float x, float y, float z);  // Матрица перемещения
+    static Mat4x4 scale(float scaleX, float scaleY, float scaleZ);  // Матрица масштабирования
+    static Mat4x4 rotationX(float angle);  // Матрица вращения вокруг оси X
+    static Mat4x4 rotationY(float angle);  // Матрица вращения вокруг оси Y
+    static Mat4x4 rotationZ(float angle);  // Матрица вращения вокруг оси Z
+
+    // Матрица проекции
     static Mat4x4 projection(float fNear, float fFar, float fFov, float fAspectRatio);
+
+    // Матрица "наведения"
     static Mat4x4 pointAt(const Vec3d& pos, const Vec3d& target, const Vec3d& up);
+
+    // Обратная матрица
     static Mat4x4 inverse(const Mat4x4& m);
 };

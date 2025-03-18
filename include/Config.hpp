@@ -20,7 +20,8 @@ limitations under the License.
 
 namespace glbl {
     constexpr float pi = 3.14159265f;
-    constexpr float rad = pi / 2 - 0.00001f;
+    constexpr float hpi = pi / 2.f - 0.00001f;
+    constexpr float rad = 180.f / pi;
 
     namespace window {
         constexpr int width = 1200;
@@ -36,7 +37,7 @@ namespace glbl {
 
         constexpr bool textureVisible = true;
         constexpr bool faceVisible = true;
-        constexpr bool backFaceVisible = false;
+        constexpr bool backFaceVisible = true;
         constexpr bool edgeVisible = false;
 
         constexpr bool liteRender = false;

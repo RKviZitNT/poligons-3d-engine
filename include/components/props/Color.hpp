@@ -16,13 +16,16 @@ limitations under the License.
 
 #pragma once
 
+// Класс для представления цвета в формате RGB
 class Color {
 public:
-    float r = 255, g = 255, b = 255;
+    float r = 255, g = 255, b = 255;  // Компоненты цвета (красный, зелёный, синий), по умолчанию белый цвет
 
-    Color() = default;
-    Color(float gray);
-    Color(float r_, float g_, float b_);
+    // Конструкторы
+    Color() = default;  // Конструктор по умолчанию (белый цвет)
+    Color(float gray);  // Конструктор для оттенков серого (r = g = b = gray)
+    Color(float r_, float g_, float b_);  // Конструктор с отдельными значениями для r, g, b
 
-    Color operator*(float brightness);
+    // Перегрузка оператора умножения на яркость
+    Color operator*(float brightness);  // Умножение цвета на коэффициент яркости
 };

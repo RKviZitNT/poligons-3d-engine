@@ -27,40 +27,41 @@ limitations under the License.
 #include "components/props/Color.hpp"
 #include "rendering/DepthBuffer.hpp"
 
+// Класс для работы с треугольником в 3D-пространстве
 class Triangle {
 public:
-    std::array<Vec3d, 3> p;
-    std::array<Vec2d, 3> t;
+    std::array<Vec3d, 3> p;  // Вершины треугольника (3D-координаты)
+    std::array<Vec2d, 3> t;  // Текстурные координаты для каждой вершины
 
-    Color col;
-    float illumination;
+    Color col;  // Цвет треугольника
+    float illumination;  // Освещённость треугольника
 
-    Triangle();
-    Triangle(Vec3d p1, Vec3d p2, Vec3d p3);
+    Triangle();  // Конструктор по умолчанию
+    Triangle(Vec3d p1, Vec3d p2, Vec3d p3);  // Конструктор с заданием вершин
 
-    void setColor(Color color);
-    void setTextureCoords(Vec2d t1, Vec2d t2, Vec2d t3);
+    void setColor(Color color);  // Установка цвета треугольника
+    void setTextureCoords(Vec2d t1, Vec2d t2, Vec2d t3);  // Установка текстурных координат
 
-    void scalingToDisplay();
+    void scalingToDisplay();  // Масштабирование треугольника для отображения на экране
 
-    Vec3d getNormal() const;
+    Vec3d getNormal() const;  // Получение нормали треугольника
 
-    void projectionDiv();
+    void projectionDiv();  // Проецирование треугольника (деление на w)
 
-    Triangle operator*(const Mat4x4& mat);
+    Triangle operator*(const Mat4x4& mat);  // Умножение треугольника на матрицу трансформации
+    Triangle& operator*=(const Mat4x4& mat);  // Умножение треугольника на матрицу с присваиванием
 
-    Triangle& operator*=(const Mat4x4& mat);
-    
-    sf::VertexArray texturedTriangle(DepthBuffer& depthBuffer, sf::Image* texture);
+    sf::VertexArray texturedTriangle(DepthBuffer& depthBuffer, sf::Image* texture);  // Отрисовка текстурированного треугольника
 
+    // Отсечение треугольника относительно плоскости
     static int clipAgainsPlane(const Vec3d& planePoint, const Vec3d& planeNormal, const Triangle& inTri, Triangle& outTri1, Triangle& outTri2);
 
 private:
-    void translateX(float f);
-    void translateY(float f);
-    void translateZ(float f);
+    void translateX(float f);  // Перемещение треугольника по оси X
+    void translateY(float f);  // Перемещение треугольника по оси Y
+    void translateZ(float f);  // Перемещение треугольника по оси Z
 
-    void scaleX(float f);
-    void scaleY(float f);
-    void scaleZ(float f);
+    void scaleX(float f);  // Масштабирование треугольника по оси X
+    void scaleY(float f);  // Масштабирование треугольника по оси Y
+    void scaleZ(float f);  // Масштабирование треугольника по оси Z
 };

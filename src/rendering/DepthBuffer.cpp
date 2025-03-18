@@ -1,37 +1,62 @@
+/*
+Copyright 2025 RKviZitNT
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
 #include "rendering/DepthBuffer.hpp"
 
+// Конструктор с заданием размеров
 DepthBuffer::DepthBuffer(int width, int height) { resize(width, height); }
 
+// Изменение размера буфера
 void DepthBuffer::resize(int width, int height) {
-    validateDimensions(width, height);
-    
-    if (width == m_width && height == m_height) return;
-    
-    m_depthBuffer = std::make_unique<float[]>(width * height);
-    m_width = width;
-    m_height = height;
-    
-    clear();
+    validateDimensions(width, height);  // Проверка корректности размеров
+
+    if (width == m_width && height == m_height) return;  // Если размеры не изменились, выходим
+
+    m_depthBuffer = std::make_unique<float[]>(width * height);  // Создание нового буфера
+    m_width = width;  // Обновление ширины
+    m_height = height;  // Обновление высоты
+
+    clear();  // Очистка буфера
 }
 
+// Очистка буфера
 void DepthBuffer::clear(float value) noexcept {
-    if (m_depthBuffer) { std::fill(m_depthBuffer.get(), m_depthBuffer.get() + m_width * m_height, value); }
+    if (m_depthBuffer) {  // Если буфер существует
+        std::fill(m_depthBuffer.get(), m_depthBuffer.get() + m_width * m_height, value);  // Заполнение значением
+    }
 }
 
+// Доступ к элементу буфера по индексу (неконстантная версия)
 float& DepthBuffer::operator()(int index) {
-    validateCoordinates(index);
-    return m_depthBuffer[index];
+    validateCoordinates(index);  // Проверка корректности индекса
+    return m_depthBuffer[index];  // Возврат элемента
 }
 
+// Доступ к элементу буфера по индексу (константная версия)
 const float& DepthBuffer::operator()(int index) const {
-    validateCoordinates(index);
-    return m_depthBuffer[index];
+    validateCoordinates(index);  // Проверка корректности индекса
+    return m_depthBuffer[index];  // Возврат элемента
 }
 
+// Валидация размеров буфера
 void DepthBuffer::validateDimensions(int width, int height) const {
-    if (width <= 0 || height <= 0) { throw std::invalid_argument("Dimensions must be positive"); }
+    if (width <= 0 || height <= 0) { throw std::invalid_argument("Dimensions must be positive"); }  // Ошибка, если размеры некорректны
 }
 
+// Валидация индекса
 void DepthBuffer::validateCoordinates(int index) const {
-    if (index > m_width * m_height || index < 0) { throw std::out_of_range("Invalid coordinates"); }
+    if (index > m_width * m_height || index < 0) { throw std::out_of_range("Invalid coordinates"); }  // Ошибка, если индекс некорректен
 }
