@@ -21,7 +21,7 @@ Engine::Engine() :
     m_window(sf::VideoMode({glbl::window::width, glbl::window::height}), "3d render", sf::Style::Titlebar | sf::Style::Close),  // Создание окна
     m_isPaused(false),  // Изначально приложение не на паузе
     m_isMouseLocked(true),  // Курсор мыши заблокирован по умолчанию
-    m_render(m_camera),  // Инициализация рендерера с камерой
+    m_render(m_camera),  // Инициализация рендера с камерой
     m_cube("resources/models/level.obj", "resources/textures/leveltexhigh.png")  // Загрузка модели и текстуры
 {
     m_window.setMouseCursorVisible(!m_isMouseLocked);  // Скрытие курсора мыши, если он заблокирован
@@ -120,7 +120,7 @@ void Engine::handleEvents() {
 
 // Обновление состояния
 void Engine::update() {
-    m_render.update();  // Обновление рендерера
+    m_render.update();  // Обновление рендера
 }
 
 // Отрисовка сцены
