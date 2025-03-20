@@ -13,21 +13,20 @@
 #include "components/lightning/Light.hpp"
 #include "rendering/DepthBuffer.hpp"
 
-// Класс для рендеринга 3D-сцены
 class Render {
 public:
-    Render(Camera& camera);  // Конструктор (принимает камеру)
+    Render(Camera& camera);
 
-    void addMesh(Mesh& mesh);  // Добавление модели в список для рендеринга
+    void addMesh(Mesh& mesh);
 
-    void update();  // Обновление матриц вида и проекции
-    void render(sf::RenderWindow& window, Light light);  // Отрисовка сцены
+    void update();
+    void render(sf::RenderWindow& window, Light light);
 
 private:
-    std::vector<Mesh*> m_renderMeshes;  // Список моделей для рендеринга
-    Camera& m_camera;  // Камера (для вычисления матриц вида и проекции)
+    std::vector<Mesh*> m_renderMeshes;
+    Camera& m_camera;
 
-    Mat4x4 matView, matProj;  // Матрицы вида и проекции
+    Mat4x4 matView, matProj;
 
-    DepthBuffer m_depthBuffer;  // Буфер глубины для корректного отображения перекрытий
+    DepthBuffer m_depthBuffer;
 };

@@ -1,12 +1,11 @@
 #include "math/Mat4x4.hpp"
 #include "math/Vec3d.hpp"
 
-// Конструктор с инициализацией списком значений
 Mat4x4::Mat4x4(std::initializer_list<std::initializer_list<float>> values) {
     int i = 0, j = 0;
-    for (const auto& row : values) {  // Проход по строкам
-        for (const auto& val : row) {  // Проход по элементам строки
-            m[i][j] = val;  // Заполнение матрицы
+    for (const auto& row : values) {
+        for (const auto& val : row) {
+            m[i][j] = val;
             j++;
         }
         i++;
@@ -14,13 +13,12 @@ Mat4x4::Mat4x4(std::initializer_list<std::initializer_list<float>> values) {
     }
 }
 
-// Умножение матриц
 Mat4x4 Mat4x4::operator*(const Mat4x4& mat) const {
     Mat4x4 result;
-    for (int i = 0; i < 4; ++i) {  // Проход по строкам первой матрицы
-        for (int j = 0; j < 4; ++j) {  // Проход по столбцам второй матрицы
+    for (size_t i = 0; i < 4; ++i) {
+        for (size_t j = 0; j < 4; ++j) {
             result.m[i][j] = 0;
-            for (int k = 0; k < 4; ++k) {  // Суммирование произведений элементов
+            for (size_t k = 0; k < 4; ++k) {
                 result.m[i][j] += this->m[i][k] * mat.m[k][j];
             }
         }
@@ -28,7 +26,6 @@ Mat4x4 Mat4x4::operator*(const Mat4x4& mat) const {
     return result;
 }
 
-// Матрица перемещения
 Mat4x4 Mat4x4::translation(float x, float y, float z) {
     return Mat4x4{
         { 1,  0,  0,  0 },
@@ -38,7 +35,6 @@ Mat4x4 Mat4x4::translation(float x, float y, float z) {
     };
 }
 
-// Матрица масштабирования
 Mat4x4 Mat4x4::scale(float scaleX, float scaleY, float scaleZ) {
     return Mat4x4{
         { scaleX,  0,       0,       0 },
@@ -48,10 +44,10 @@ Mat4x4 Mat4x4::scale(float scaleX, float scaleY, float scaleZ) {
     };
 }
 
-// Матрица вращения вокруг оси X
 Mat4x4 Mat4x4::rotationX(float angle) {
-    float s = sinf(angle);  // Синус угла
-    float c = cosf(angle);  // Косинус угла
+    float rad = angle * glbl::rad;
+    float s = sinf(rad);
+    float c = cosf(rad);
     return Mat4x4{
         { 1,  0,  0,  0 },
         { 0,  c,  s,  0 },
@@ -60,10 +56,10 @@ Mat4x4 Mat4x4::rotationX(float angle) {
     };
 }
 
-// Матрица вращения вокруг оси Y
 Mat4x4 Mat4x4::rotationY(float angle) {
-    float s = sinf(angle);  // Синус угла
-    float c = cosf(angle);  // Косинус угла
+    float rad = angle * glbl::rad;
+    float s = sinf(rad);
+    float c = cosf(rad);
     return Mat4x4{
         { c,  0,  s,  0 },
         { 0,  1,  0,  0 },
@@ -72,10 +68,10 @@ Mat4x4 Mat4x4::rotationY(float angle) {
     };
 }
 
-// Матрица вращения вокруг оси Z
 Mat4x4 Mat4x4::rotationZ(float angle) {
-    float s = sinf(angle);  // Синус угла
-    float c = cosf(angle);  // Косинус угла
+    float rad = angle * glbl::rad;
+    float s = sinf(rad);
+    float c = cosf(rad);
     return Mat4x4{
         { c,  s,  0,  0 },
         {-s,  c,  0,  0 },
@@ -84,9 +80,8 @@ Mat4x4 Mat4x4::rotationZ(float angle) {
     };
 }
 
-// Матрица проекции
 Mat4x4 Mat4x4::projection(float fNear, float fFar, float fFov, float fAspectRatio) {
-    float fFovRad = 1.f / tanf(fFov * 0.5f * (glbl::pi / 180.f));  // Преобразование угла обзора в радианы
+    float fFovRad = 1.f / tanf(fFov * 0.5f * glbl::rad);
     return Mat4x4{
         { fAspectRatio * fFovRad,  0,        0,                                 0 },
         { 0,                       fFovRad,  0,                                 0 },
@@ -95,11 +90,10 @@ Mat4x4 Mat4x4::projection(float fNear, float fFar, float fFov, float fAspectRati
     };
 }
 
-// Матрица "наведения"
 Mat4x4 Mat4x4::pointAt(const Vec3d& pos, const Vec3d& target, const Vec3d& up) {
-    Vec3d newForward = (target - pos).normalize();  // Новое направление "вперёд"
-    Vec3d newUp = (up - newForward * up.dot(newForward)).normalize();  // Новое направление "вверх"
-    Vec3d newRigh = newUp.cross(newForward);  // Новое направление "вправо"
+    Vec3d newForward = (target - pos).normalize();
+    Vec3d newUp = (up - newForward * up.dot(newForward)).normalize();
+    Vec3d newRigh = newUp.cross(newForward);
 
     return Mat4x4{
         { newRigh.x,     newRigh.y,     newRigh.z,     0 },
@@ -109,7 +103,6 @@ Mat4x4 Mat4x4::pointAt(const Vec3d& pos, const Vec3d& target, const Vec3d& up) {
     };
 }
 
-// Обратная матрица
 Mat4x4 Mat4x4::inverse(const Mat4x4& mat) {
     Mat4x4 matrix{
         { mat.m[0][0],  mat.m[1][0],  mat.m[2][0],  0 },

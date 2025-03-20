@@ -5,7 +5,7 @@
 namespace glbl {
     constexpr float pi = 3.14159265f;
     constexpr float hpi = pi / 2.f - 0.00001f;
-    constexpr float rad = 180.f / pi;
+    constexpr float rad = pi / 180.f;
 
     namespace window {
         constexpr int width = 1920;
