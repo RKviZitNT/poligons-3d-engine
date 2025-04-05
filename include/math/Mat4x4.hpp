@@ -4,7 +4,7 @@
 #include <array>
 #include <cmath>
 
-#include "Config.hpp"
+#include "utils/ConfigManager.hpp"
 
 class Vec3d;
 

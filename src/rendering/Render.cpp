@@ -1,6 +1,6 @@
 #include "rendering/Render.hpp"
 
-Render::Render(Camera& camera) : m_camera(camera), m_depthBuffer(glbl::window::width, glbl::window::height) {}
+Render::Render(Camera& camera) : m_camera(camera), m_depthBuffer(config.width, config.height) {}
 
 void Render::addMesh(Mesh& mesh) {
     m_renderMeshes.emplace_back(&mesh);
@@ -8,7 +8,7 @@ void Render::addMesh(Mesh& mesh) {
 
 void Render::update() {
     matView = Mat4x4::inverse(Mat4x4::pointAt(m_camera.getPos(), m_camera.getPos() + m_camera.getDir(), {0, 1, 0}));
-    matProj = Mat4x4::projection(glbl::render::fNear, glbl::render::fFar, glbl::render::fFov, (float)glbl::window::height / (float)glbl::window::width);
+    matProj = Mat4x4::projection(config.fNear, config.fFar, config.fFov, (float)config.height / (float)config.width);
 }
 
 void Render::render(sf::RenderWindow& window, Light light) {
@@ -21,12 +21,11 @@ void Render::render(sf::RenderWindow& window, Light light) {
 
     m_depthBuffer.clear(0.f);
 
-    // Обработка всех моделей
     for (auto& mesh : m_renderMeshes) {
         std::vector<Triangle> triangles = mesh->getTransformedTriangles();
 
         for (auto& triangle : triangles) {
-            if (glbl::render::backFaceVisible || triangle.getNormal().dot(triangle.p[0] - m_camera.getPos()) < 0) {
+            if (config.backFaceVisible || triangle.getNormal().dot(triangle.p[0] - m_camera.getPos()) < 0) {
                 triangle.illumination = std::max(0.3f, triangle.getNormal().dot(light.getDir()));
 
                 Triangle projectedTriangle = triangle;
@@ -46,7 +45,7 @@ void Render::render(sf::RenderWindow& window, Light light) {
             }
         }
 
-        if (glbl::render::liteRender) {
+        if (config.liteRender) {
             std::sort(projectedTriangles.begin(), projectedTriangles.end(), [](const Triangle& t1, const Triangle& t2) {
                 return (t1.p[0].z + t1.p[1].z + t1.p[2].z)/3 > (t2.p[0].z + t2.p[1].z + t2.p[2].z)/3;
             });
@@ -68,9 +67,9 @@ void Render::render(sf::RenderWindow& window, Light light) {
 
                     switch (i) {
                     case 0: poligonsToAdd = Triangle::clipAgainsPlane({0, 0, 0}, {0, 1, 0}, tri, clipped[0], clipped[1]); break;
-                    case 1: poligonsToAdd = Triangle::clipAgainsPlane({0, (float)glbl::window::height - 1, 0}, {0, -1, 0}, tri, clipped[0], clipped[1]); break;
+                    case 1: poligonsToAdd = Triangle::clipAgainsPlane({0, (float)config.height - 1, 0}, {0, -1, 0}, tri, clipped[0], clipped[1]); break;
                     case 2: poligonsToAdd = Triangle::clipAgainsPlane({0, 0, 0}, {1, 0, 0}, tri, clipped[0], clipped[1]); break;
-                    case 3: poligonsToAdd = Triangle::clipAgainsPlane({(float)glbl::window::width - 1, 0, 0}, {-1, 0, 0}, tri, clipped[0], clipped[1]); break;
+                    case 3: poligonsToAdd = Triangle::clipAgainsPlane({(float)config.width - 1, 0, 0}, {-1, 0, 0}, tri, clipped[0], clipped[1]); break;
                     }
 
                     for (int j = 0; j < poligonsToAdd; j++) {
@@ -84,24 +83,24 @@ void Render::render(sf::RenderWindow& window, Light light) {
             for (const auto& tri : triangles) { renderedTriangles.emplace_back(tri); }
         }
 
-        if (!glbl::render::liteRender) {
+        if (!config.liteRender) {
             for (auto& triangle : renderedTriangles) {
                 texturedTriangles.emplace_back(triangle.texturedTriangle(m_depthBuffer, mesh->getTexture()));
             }
         }
     }
 
-    if (glbl::render::liteRender) {
+    if (config.liteRender) {
         for (const auto& triangle : renderedTriangles) {
             sf::Color faceColor(triangle.col.r * triangle.illumination, triangle.col.g * triangle.illumination, triangle.col.b * triangle.illumination);
 
-            if (glbl::render::faceVisible) {
+            if (config.faceVisible) {
                 drawingTriangles.append(sf::Vertex{sf::Vector2f(triangle.p[0].x, triangle.p[0].y), faceColor});
                 drawingTriangles.append(sf::Vertex{sf::Vector2f(triangle.p[1].x, triangle.p[1].y), faceColor});
                 drawingTriangles.append(sf::Vertex{sf::Vector2f(triangle.p[2].x, triangle.p[2].y), faceColor});
             }
 
-            if (glbl::render::edgeVisible) {
+            if (config.edgeVisible) {
                 drawingEdges.append(sf::Vertex{sf::Vector2f(triangle.p[0].x, triangle.p[0].y), edgeColor});
                 drawingEdges.append(sf::Vertex{sf::Vector2f(triangle.p[1].x, triangle.p[1].y), edgeColor});
                 drawingEdges.append(sf::Vertex{sf::Vector2f(triangle.p[1].x, triangle.p[1].y), edgeColor});
@@ -111,11 +110,11 @@ void Render::render(sf::RenderWindow& window, Light light) {
             }
         }
 
-        if (glbl::render::faceVisible && drawingTriangles.getVertexCount() > 0) {
+        if (config.faceVisible && drawingTriangles.getVertexCount() > 0) {
             window.draw(drawingTriangles);
         }
 
-        if (glbl::render::edgeVisible && drawingEdges.getVertexCount() > 0) {
+        if (config.edgeVisible && drawingEdges.getVertexCount() > 0) {
             window.draw(drawingEdges);
         }
     }

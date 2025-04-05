@@ -4,7 +4,7 @@
 #include <vector>
 #include <deque>
 
-#include "Config.hpp"
+#include "utils/ConfigManager.hpp"
 #include "math/Mat4x4.hpp"
 #include "math/Vec3d.hpp"
 #include "components/geometry/Triangle.hpp"

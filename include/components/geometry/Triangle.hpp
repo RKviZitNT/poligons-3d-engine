@@ -4,7 +4,7 @@
 #include <array>
 #include <algorithm>
 
-#include "Config.hpp"
+#include "utils/ConfigManager.hpp"
 #include "math/Vec2d.hpp"
 #include "math/Vec3d.hpp"
 #include "math/Mat4x4.hpp"

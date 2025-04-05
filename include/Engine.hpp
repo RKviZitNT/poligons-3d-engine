@@ -3,7 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 
-#include "Config.hpp"
+#include "utils/ConfigManager.hpp"
 #include "math/Vec3d.hpp"
 #include "components/geometry/Mesh.hpp"
 #include "components/lightning/Light.hpp"
@@ -20,14 +20,13 @@ private:
     sf::Time deltaTime;
 
     sf::Vector2i windowCenter;
-    bool m_isMouseLocked;
-    bool m_isPaused;
+    bool m_isMouseLocked = true;
+    bool m_isPaused = false;
 
-    Render m_render;
-    Camera m_camera;
-    Light m_light;
-
-    Mesh m_cube;
+    Render* m_render;
+    Camera* m_camera;
+    Light* m_light;
+    Mesh* m_cube;
 
     float m_cameraTranslateSpeed, m_cameraRotateSpeed;
 

@@ -21,7 +21,7 @@ namespace glbl {
 
         constexpr bool textureVisible = true;
         constexpr bool faceVisible = true;
-        constexpr bool backFaceVisible = true;
+        constexpr bool backFaceVisible = false;
         constexpr bool edgeVisible = false;
 
         constexpr bool liteRender = false;

@@ -7,7 +7,6 @@
 #include <sstream>
 #include <algorithm>
 
-#include "Config.hpp"
 #include "math/Mat4x4.hpp"
 #include "math/Vec3d.hpp"
 #include "math/Vec2d.hpp"

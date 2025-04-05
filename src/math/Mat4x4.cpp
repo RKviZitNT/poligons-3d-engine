@@ -45,7 +45,7 @@ Mat4x4 Mat4x4::scale(float scaleX, float scaleY, float scaleZ) {
 }
 
 Mat4x4 Mat4x4::rotationX(float angle) {
-    float rad = angle * glbl::rad;
+    float rad = angle * config.rad;
     float s = sinf(rad);
     float c = cosf(rad);
     return Mat4x4{
@@ -57,7 +57,7 @@ Mat4x4 Mat4x4::rotationX(float angle) {
 }
 
 Mat4x4 Mat4x4::rotationY(float angle) {
-    float rad = angle * glbl::rad;
+    float rad = angle * config.rad;
     float s = sinf(rad);
     float c = cosf(rad);
     return Mat4x4{
@@ -69,7 +69,7 @@ Mat4x4 Mat4x4::rotationY(float angle) {
 }
 
 Mat4x4 Mat4x4::rotationZ(float angle) {
-    float rad = angle * glbl::rad;
+    float rad = angle * config.rad;
     float s = sinf(rad);
     float c = cosf(rad);
     return Mat4x4{
@@ -81,7 +81,7 @@ Mat4x4 Mat4x4::rotationZ(float angle) {
 }
 
 Mat4x4 Mat4x4::projection(float fNear, float fFar, float fFov, float fAspectRatio) {
-    float fFovRad = 1.f / tanf(fFov * 0.5f * glbl::rad);
+    float fFovRad = 1.f / tanf(fFov * 0.5f * config.rad);
     return Mat4x4{
         { fAspectRatio * fFovRad,  0,        0,                                 0 },
         { 0,                       fFovRad,  0,                                 0 },

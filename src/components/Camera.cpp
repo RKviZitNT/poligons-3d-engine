@@ -26,7 +26,7 @@ void Camera::rotateHorizontal(float offset) { fYaw += offset; }
 void Camera::rotateVertical(float offset) { fPitch += offset; }
 
 void Camera::update() {
-    const float maxPith = glbl::hpi;
+    const float maxPith = config.hpi;
     if (fPitch > maxPith) fPitch = maxPith;
     if (fPitch < -maxPith) fPitch = -maxPith;
 
