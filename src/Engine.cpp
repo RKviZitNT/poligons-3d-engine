@@ -69,18 +69,18 @@ void Engine::handleEvents() {
 
         if (event->is<sf::Event::FocusLost>()) {
             m_isPaused = true;
+            switchMouseState();
         }
 
         if (event->is<sf::Event::FocusGained>()) {
             m_isPaused = false;
+            switchMouseState();
         }
 
         if (event->is<sf::Event::KeyPressed>()) {
             auto eventKeyPressed = event->getIf<sf::Event::KeyPressed>();
             if (eventKeyPressed->code == sf::Keyboard::Key::Escape) {
-                m_isMouseLocked = !m_isMouseLocked;
-                sf::Mouse::setPosition(windowCenter, m_window);
-                m_window.setMouseCursorVisible(!m_isMouseLocked);
+                switchMouseState();
             }
         }
     }
@@ -115,4 +115,10 @@ void Engine::draw() {
     m_render->render(m_window, *m_light);
 
     m_window.display();
+}
+
+void Engine::switchMouseState() {
+    m_isMouseLocked = !m_isMouseLocked;
+    sf::Mouse::setPosition(windowCenter, m_window);
+    m_window.setMouseCursorVisible(!m_isMouseLocked);
 }

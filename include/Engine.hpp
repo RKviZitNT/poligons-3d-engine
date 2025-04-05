@@ -33,4 +33,6 @@ private:
     void handleEvents();
     void update();
     void draw();
+
+    void switchMouseState();
 };
