@@ -34,5 +34,5 @@ private:
     void update();
     void draw();
 
-    void switchMouseState();
+    void setMouseState(bool state);
 };
